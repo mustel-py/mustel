@@ -1,0 +1,32 @@
+module: jwt
+version_min: "1.0"
+patterns:
+  - id: "jwt-algorithm-none"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-347"
+    detect:
+      type: "pattern"
+      match: "algorithm=['\"]none['\"]|algorithms=\\[['\"]none['\"]\\]"
+    message: "JWT algorithm='none' disables signature verification entirely. Any attacker can forge tokens by setting alg:none in the header. Always specify a strong algorithm: HS256 for symmetric, RS256 for asymmetric."
+    docs: "https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/"
+
+  - id: "jwt-decode-no-verify"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-347"
+    detect:
+      type: "pattern"
+      match: "decode\\(.*verify=False|options=\\{.*verify.*False"
+    message: "JWT decoded with signature verification disabled. This means any token — including forged ones — will be accepted. Never disable JWT verification in production."
+    docs: "https://pyjwt.readthedocs.io/en/stable/usage.html"
+
+  - id: "jwt-no-expiry-check"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-613"
+    detect:
+      type: "pattern"
+      match: "jwt\\.decode\\("
+    message: "Ensure JWT tokens include an 'exp' (expiration) claim and that your decode call validates it. Tokens without expiry never expire, which means revoked users remain authenticated. Use options={'require': ['exp']} in PyJWT."
+    docs: "https://pyjwt.readthedocs.io/en/stable/usage.html#expiration-time-claim-exp"

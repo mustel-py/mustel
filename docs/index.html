@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Fix ModuleNotFoundError: No module named & Python Environment Inspector | mustel</title>
+    <meta name="title" content="Fix ModuleNotFoundError: No module named & Python Environment Inspector | mustel">
+    <meta name="description"
+        content="Solved: ModuleNotFoundError: No module named. mustel finds all installed packages across every Python version on your system. Debug pip install issues instantly.">
+    <meta name="keywords"
+        content="ModuleNotFoundError, No module named, python environment inspector, pip installed but module not found, python site-packages, python version manager, mustel">
+    <meta name="author" content="mustel">
+    <meta name="google-site-verification" content="WiwppuqzGTdbTgByexrEjIWxoWKjNvMUDQ69Q2QEEMc" />
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://mustel.netlify.app/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mustel.netlify.app/">
+    <meta property="og:title" content="Fix ModuleNotFoundError & Python Environment Inspector | mustel">
+    <meta property="og:description"
+        content="Solved: ModuleNotFoundError: No module named. See exactly which Python has your packages installed.">
+    <meta property="og:image" content="https://mustel.netlify.app/mustel.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://mustel.netlify.app/">
+    <meta property="twitter:title" content="Fix ModuleNotFoundError & Python Environment Inspector | mustel">
+    <meta property="twitter:description"
+        content="Solved: ModuleNotFoundError: No module named. See exactly which Python has your packages installed.">
+    <meta property="twitter:image" content="https://mustel.netlify.app/mustel.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="mustel.png">
+    <link rel="apple-touch-icon" href="mustel.png">
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "mustel",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "description": "A simple Python environment inspector that helps you see what packages are installed across all your Python versions.",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #0e0e0e;
+            color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        /* NAV */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            width: 36px;
+            height: 36px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: #aaa;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .nav-links a.active {
+            background: #1f1f1f;
+            color: #fff;
+        }
+
+        /* HERO */
+        .hero {
+            max-width: 800px;
+            margin: 60px auto 80px;
+            padding: 0 40px;
+            text-align: center;
+        }
+
+        .hero-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #888;
+            max-width: 520px;
+            margin: 0 auto 36px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #c94a4a;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #1f1f1f;
+            color: #ddd;
+            border: 2px solid #333;
+        }
+
+        /* INSTALL */
+        .install-section {
+            max-width: 600px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+        }
+
+        .install-box {
+            background: #161616;
+            border: 2px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .install-box code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: #7ec87e;
+        }
+
+        .install-box span {
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* FEATURES */
+        .features {
+            max-width: 900px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+        }
+
+        .features h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: #161616;
+            border: 2px solid #222;
+            border-radius: 18px;
+            padding: 28px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* PROBLEM SECTION */
+        .problem {
+            max-width: 700px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+        }
+
+        .problem h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .problem-box {
+            background: #1a1414;
+            border: 2px solid #3a2020;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .problem-box p {
+            color: #bbb;
+            margin-bottom: 16px;
+        }
+
+        .problem-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .problem-box code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #251818;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #e88;
+        }
+
+        .problem-box pre {
+            background: #0e0e0e;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .problem-box pre code {
+            background: none;
+            padding: 0;
+            color: #ccc;
+        }
+
+        /* TERMINAL */
+        .terminal {
+            max-width: 700px;
+            margin: 0 auto 24px;
+            background: #0c0c0c;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .terminal-header {
+            background: #1e1e1e;
+            padding: 12px 16px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red {
+            background: #ff5f56;
+        }
+
+        .terminal-dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .terminal-dot.green {
+            background: #27c93f;
+        }
+
+        .terminal-title {
+            color: #888;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 12px;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .terminal-box {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .terminal-box-header {
+            color: #c96868;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-row {
+            display: flex;
+            margin: 4px 0;
+        }
+
+        .terminal-label {
+            color: #888;
+            min-width: 100px;
+        }
+
+        .terminal-value {
+            color: #9cdcfe;
+        }
+
+        .terminal-status-active {
+            color: #4ec9b0;
+        }
+
+        .terminal-accent {
+            color: #c96868;
+        }
+
+        .terminal-success {
+            color: #4ec9b0;
+        }
+
+        .terminal-star {
+            color: #dcdcaa;
+        }
+
+        .terminal-dim {
+            color: #555;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+            font-size: 14px;
+            border-top: 1px solid #1f1f1f;
+        }
+
+        footer a {
+            color: #888;
+            text-decoration: none;
+            margin: 0 12px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero {
+                margin: 40px auto 60px;
+                padding: 0 20px;
+            }
+
+            .install-box {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .features,
+            .problem,
+            .install-section {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html" class="nav-logo">
+            <img src="mustel.png" alt="mustel">
+            mustel
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="docs.html">Docs</a>
+            <a href="https://pypi.org/project/mustel/">PyPI</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <img src="mustel.png" alt="mustel" class="hero-logo">
+        <h1>mustel <span
+                style="font-size: 0.5em; background: linear-gradient(135deg, #2a5a2a, #1a3a1a); padding: 4px 12px; border-radius: 20px; color: #8fc98f; vertical-align: middle;">v0.1.1</span>
+        </h1>
+        <p>Your Python environment companion. Inspect packages, manage venvs, fix confusion.</p>
+        <div class="hero-buttons">
+            <a href="docs.html" class="btn btn-primary">Read the Docs</a>
+            <a href="https://pypi.org/project/mustel/" class="btn btn-secondary">View on PyPI</a>
+        </div>
+    </section>
+
+    <section class="install-section">
+        <div class="install-box">
+            <code>pip install mustel</code>
+            <span>copy & paste into terminal</span>
+        </div>
+    </section>
+
+    <!-- WHAT IS MUSTEL -->
+    <section class="features">
+        <h2>What is mustel?</h2>
+        <p style="text-align: center; color: #888; max-width: 600px; margin: 0 auto 40px;">
+            A simple CLI tool that helps you understand and control your Python setup.
+            Perfect for beginners and experts alike.
+        </p>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🔍 Inspect</h3>
+                <p>See all Python versions on your system. Find where packages are installed. Fix ModuleNotFoundError.
+                </p>
+            </div>
+            <div class="feature-card">
+                <h3>📦 Venv Manager</h3>
+                <p>Create, list, and delete virtual environments. Detect and fix broken venvs automatically.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🧭 Understand</h3>
+                <p>Visual dashboards show exactly what's happening. No more guessing or memorizing commands.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE PROBLEM -->
+    <section class="problem">
+        <h2>😕 The Problem mustel Solves</h2>
+        <div class="problem-box">
+            <p>You install a package:</p>
+            <pre><code>pip install numpy</code></pre>
+            <p>But Python says:</p>
+            <pre><code>ModuleNotFoundError: No module named 'numpy'</code></pre>
+            <p><strong>Why?</strong> You have <strong>multiple Pythons</strong>. pip installed in one, you're running
+                another.</p>
+            <p><strong>mustel</strong> shows you exactly which packages are in which Python — and helps you manage
+                virtual environments so this never happens again.</p>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>See it in action</h2>
+
+        <h3 style="text-align: center; color: #888; font-weight: 400; margin-bottom: 24px;">🔍 Inspect your Python setup
+        </h3>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="terminal-title">Windows PowerShell</span>
+            </div>
+            <div class="terminal-body">PS C:\> mustel all
+
+                🦦 mustel — all pythons
+
+                Found 2 Python(s):
+
+                ------------------------------------------------------------
+                ★ Python 3.13.7 (current)
+                Path: C:\Users\You\AppData\Local\Programs\Python\Python313\python.exe
+                Packages: 170
+
+                Python 3.12.0
+                Path: C:\Users\You\AppData\Local\Programs\Python\Python312\python.exe
+                Packages: 45
+                ------------------------------------------------------------</div>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="terminal-title">Windows PowerShell</span>
+            </div>
+            <div class="terminal-body">PS C:\> mustel check requests
+
+                🦦 mustel — check 'requests'
+
+                ✅ 'requests' is available in current Python</div>
+        </div>
+
+        <h3 style="text-align: center; color: #888; font-weight: 400; margin: 40px 0 24px;">📦 Manage virtual
+            environments</h3>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="terminal-title">PowerShell</span>
+            </div>
+            <div class="terminal-body">
+                <div style="color: #888; margin-bottom: 8px;">PS C:\Projects\webapp&gt; <span
+                        style="color: #fff;">mustel venv</span></div>
+                <div class="terminal-box">
+                    <div class="terminal-box-header">🦦 mustel venv</div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">📍 Folder:</span>
+                        <span class="terminal-value">C:\Projects\webapp</span>
+                    </div>
+                    <div class="terminal-row" style="margin-top: 12px;">
+                        <span class="terminal-label">Status:</span>
+                        <span class="terminal-status-active">✅ ACTIVE</span>
+                    </div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">Path:</span>
+                        <span class="terminal-value">.venv/</span>
+                    </div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">Python:</span>
+                        <span class="terminal-value">Python 3.13.11</span>
+                    </div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">Packages:</span>
+                        <span class="terminal-value">24</span>
+                    </div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">Size:</span>
+                        <span class="terminal-value">156.2 MB</span>
+                    </div>
+                </div>
+                <div style="margin-top: 16px; color: #888;">
+                    <div>Commands:</div>
+                    <div style="margin-left: 16px; margin-top: 4px;">mustel venv new
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create venv here</div>
+                    <div style="margin-left: 16px;">mustel venv list &nbsp;&nbsp;&nbsp;&nbsp;Show all venvs</div>
+                    <div style="margin-left: 16px;">mustel venv destroy &nbsp;Remove venv</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="terminal-title">PowerShell</span>
+            </div>
+            <div class="terminal-body">
+                <div style="color: #888; margin-bottom: 8px;">PS C:\Projects\new-app&gt; <span
+                        style="color: #fff;">mustel venv new</span></div>
+                <div class="terminal-accent" style="margin: 12px 0;">🦦 mustel venv new</div>
+                <div>📍 Creating .venv in: <span class="terminal-value">C:\Projects\new-app</span></div>
+                <div>🐍 Using: <span class="terminal-value">C:\Users\You\Python313\python.exe</span></div>
+                <div style="margin: 12px 0; color: #888;">⏳ Please wait...</div>
+                <div class="terminal-success">✅ Venv created successfully!</div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        <div style="margin-bottom: 16px;">
+            <a href="https://pypi.org/project/mustel/">PyPI</a>
+            <a href="https://www.linkedin.com/company/mustel-py/">LinkedIn</a>
+        </div>
+        <div style="color: #666; font-size: 13px;">
+            Principal Maintainers: <a href="https://www.linkedin.com/in/ameya-kulkarni-a31b74246"
+                style="color: #888;">Ameya K</a> · <a href="https://www.linkedin.com/in/raunak-nayak-5b937732a"
+                style="color: #888;">Raunak N</a>
+        </div>
+    </footer>
+</body>
+
+</html>

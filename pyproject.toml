@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mustel"
+version = "0.2.0"
+description = "Non-AI bug and security detection layer for AI IDEs and coding agents"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+authors = [
+    { name = "Ameya Kulkarni, Raunak Nayak", email = "acclaptop47@gmail.com" },
+]
+keywords = ["python", "security", "linter", "bug-detection", "ide", "mcp", "ai-agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Security",
+]
+
+dependencies = [
+    "ruff>=0.4.0",
+    "bandit>=1.7.0",
+    "pip-audit>=2.6.0",
+    "watchdog>=3.0.0",
+    "mcp>=1.0.0",
+    "pyyaml>=6.0",
+    "click>=8.0.0",
+]
+
+[project.scripts]
+mustel = "mustel.cli:main"
+
+[project.urls]
+Homepage = "https://mustel.netlify.app"
+Repository = "https://github.com/mustel-py/mustel"
+Issues = "https://github.com/mustel-py/mustel/issues"
+Changelog = "https://github.com/mustel-py/mustel/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mustel"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]

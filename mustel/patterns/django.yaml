@@ -1,0 +1,42 @@
+module: django
+version_min: "3.0"
+patterns:
+  - id: "django-debug-true"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-94"
+    detect:
+      type: "pattern"
+      match: "DEBUG\\s*=\\s*True"
+    message: "Django DEBUG=True exposes full stack traces, SQL queries, and settings to any visitor when an error occurs. Set DEBUG = False in production and use environment variables: DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'."
+    docs: "https://docs.djangoproject.com/en/stable/ref/settings/#debug"
+
+  - id: "django-hardcoded-secret-key"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-259"
+    detect:
+      type: "pattern"
+      match: "SECRET_KEY\\s*=\\s*['\"].{10,}['\"]"
+    message: "Django SECRET_KEY is hardcoded. Any exposure of this codebase compromises all sessions and signed data. Use: SECRET_KEY = os.environ['DJANGO_SECRET_KEY'] and generate a new key for production."
+    docs: "https://docs.djangoproject.com/en/stable/ref/settings/#secret-key"
+
+  - id: "django-allowed-hosts-wildcard"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-183"
+    detect:
+      type: "pattern"
+      match: "ALLOWED_HOSTS\\s*=\\s*\\[\\s*['\"]\\*['\"]"
+    message: "ALLOWED_HOSTS = ['*'] disables Django's host header validation, enabling host header injection attacks. Specify exact allowed hostnames in production."
+    docs: "https://docs.djangoproject.com/en/stable/ref/settings/#allowed-hosts"
+
+  - id: "django-sql-extra"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-89"
+    detect:
+      type: "pattern"
+      match: "\\.extra\\(.*select=|extra\\(.*where="
+    message: "Django QuerySet.extra() can introduce SQL injection if user input is embedded in select or where parameters. Use ORM methods or RawSQL with proper parameterization instead."
+    docs: "https://docs.djangoproject.com/en/stable/ref/models/querysets/#extra"

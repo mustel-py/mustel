@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mustel.netlify.app/sitemap.xml

@@ -1,0 +1,20 @@
+module: json
+version_min: "3.0"
+patterns:
+  - id: "json-loads-unvalidated"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "json\\.loads\\("
+    message: "json.loads() will raise json.JSONDecodeError on malformed input. Ensure you wrap calls in try/except json.JSONDecodeError when parsing untrusted input, and validate the structure of parsed data before using it."
+    docs: "https://docs.python.org/3/library/json.html#json.loads"
+
+  - id: "json-load-file-unvalidated"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "json\\.load\\("
+    message: "json.load() reads and parses a file without schema validation. For configuration files or API responses, validate the structure with a schema library (jsonschema, pydantic) to catch missing fields or type errors early."
+    docs: "https://docs.python.org/3/library/json.html#json.load"

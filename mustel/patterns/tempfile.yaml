@@ -1,0 +1,21 @@
+module: tempfile
+version_min: "3.0"
+patterns:
+  - id: "tempfile-mktemp-insecure"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-377"
+    detect:
+      type: "pattern"
+      match: "tempfile\\.mktemp\\("
+    message: "tempfile.mktemp() is insecure — there is a TOCTOU race condition between the time the name is generated and the time you open the file. Use tempfile.NamedTemporaryFile() or tempfile.mkstemp() which create and open atomically."
+    docs: "https://docs.python.org/3/library/tempfile.html#tempfile.mktemp"
+
+  - id: "tempfile-named-no-delete"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "NamedTemporaryFile\\(.*delete=False"
+    message: "NamedTemporaryFile(delete=False) creates a temp file that is NOT automatically cleaned up. Ensure you delete it explicitly in a finally block or use contextlib.ExitStack."
+    docs: "https://docs.python.org/3/library/tempfile.html#tempfile.NamedTemporaryFile"

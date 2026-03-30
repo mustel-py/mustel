@@ -1,0 +1,31 @@
+module: sqlite3
+version_min: "3.0"
+patterns:
+  - id: "sqlite3-sql-injection-format"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-89"
+    detect:
+      type: "pattern"
+      match: "\\.execute\\(.*%.*%|execute\\(.*\\.format\\(|execute\\(f['\"]"
+    message: "SQL query built with string formatting — SQL injection vulnerability. Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,)) instead of string formatting."
+    docs: "https://docs.python.org/3/library/sqlite3.html#sqlite3-placeholders"
+
+  - id: "sqlite3-sql-injection-concat"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-89"
+    detect:
+      type: "pattern"
+      match: "\\.execute\\(.*\\+.*\\)"
+    message: "SQL query built with string concatenation — SQL injection vulnerability. Use parameterized queries with ? placeholders instead of concatenating user input into the SQL string."
+    docs: "https://docs.python.org/3/library/sqlite3.html#sqlite3-placeholders"
+
+  - id: "sqlite3-executescript-injection"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-89"
+    detect:
+      type: "pattern"
+      match: "executescript\\(.*\\+|executescript\\(f['\"]|executescript\\(.*\\.format"
+    message: "executescript() called with dynamic content — SQL injection risk. executescript() does not support parameterized queries. Sanitize input very carefully or avoid dynamic SQL entirely."

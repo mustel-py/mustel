@@ -1,0 +1,32 @@
+module: xml
+version_min: "3.0"
+patterns:
+  - id: "xml-etree-xxe"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-611"
+    detect:
+      type: "pattern"
+      match: "xml\\.etree\\.ElementTree\\.parse\\(|ET\\.parse\\(|ElementTree\\.parse\\("
+    message: "xml.etree.ElementTree is vulnerable to XML bomb / Billion Laughs attacks on Python < 3.8. On newer Python it is protected, but not against XXE. For untrusted XML, use defusedxml: pip install defusedxml."
+    docs: "https://docs.python.org/3/library/xml.html#xml-vulnerabilities"
+
+  - id: "xml-minidom-unsafe"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-611"
+    detect:
+      type: "pattern"
+      match: "xml\\.dom\\.minidom\\.parseString\\(|minidom\\.parse\\("
+    message: "xml.dom.minidom is vulnerable to XML bomb attacks. Use defusedxml.minidom for untrusted XML input."
+    docs: "https://github.com/tiran/defusedxml"
+
+  - id: "xml-sax-unsafe"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-611"
+    detect:
+      type: "pattern"
+      match: "xml\\.sax\\.parse\\(|xml\\.sax\\.parseString\\("
+    message: "xml.sax parsers are vulnerable to XML bomb and XXE attacks on untrusted input. Use defusedxml.sax instead."
+    docs: "https://github.com/tiran/defusedxml"

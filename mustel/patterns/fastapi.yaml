@@ -1,0 +1,31 @@
+module: fastapi
+version_min: "0.60"
+patterns:
+  - id: "fastapi-cors-wildcard"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-942"
+    detect:
+      type: "pattern"
+      match: "allow_origins=\\[.*\\*.*\\]|allow_origins=['\"]\\*['\"]"
+    message: "CORS allow_origins=['*'] permits requests from any origin. In production, restrict to your specific frontend domains: allow_origins=['https://yourapp.com']."
+    docs: "https://fastapi.tiangolo.com/tutorial/cors/"
+
+  - id: "fastapi-no-auth-dependency"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-306"
+    detect:
+      type: "pattern"
+      match: "@app\\.delete\\(|@router\\.delete\\("
+    message: "DELETE endpoint detected. Ensure it is protected by an authentication dependency: @app.delete('/item/{id}', dependencies=[Depends(verify_token)]). Unprotected DELETE endpoints are a common misconfiguration."
+    docs: "https://fastapi.tiangolo.com/tutorial/dependencies/"
+
+  - id: "fastapi-query-no-validation"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "def .*\\(.*request: Request\\)"
+    message: "Raw Request object used in endpoint. Consider using FastAPI's typed query parameters and Pydantic models for automatic validation instead of accessing request data directly."
+    docs: "https://fastapi.tiangolo.com/tutorial/query-params/"

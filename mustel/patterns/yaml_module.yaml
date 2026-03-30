@@ -1,0 +1,21 @@
+module: yaml
+version_min: "3.0"
+patterns:
+  - id: "yaml-load-unsafe"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-20"
+    detect:
+      type: "pattern"
+      match: "yaml\\.load\\([^)]*\\)"
+    message: "yaml.load() without an explicit Loader can execute arbitrary Python code embedded in YAML. Use yaml.safe_load() for untrusted input, or yaml.load(data, Loader=yaml.SafeLoader) if you need full YAML features."
+    docs: "https://pyyaml.org/wiki/PyYAMLDocumentation"
+
+  - id: "yaml-load-no-loader"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-20"
+    detect:
+      type: "pattern"
+      match: "yaml\\.load\\([^,)]+\\)"
+    message: "yaml.load() called without a Loader argument. This is deprecated and dangerous — it defaults to unsafe parsing that can run arbitrary Python. Replace with yaml.safe_load() or pass Loader=yaml.SafeLoader explicitly."

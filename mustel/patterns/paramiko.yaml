@@ -1,0 +1,30 @@
+module: paramiko
+version_min: "1.0"
+patterns:
+  - id: "paramiko-autoaddpolicy"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-295"
+    detect:
+      type: "pattern"
+      match: "AutoAddPolicy\\(\\)|AutoAddPolicy"
+    message: "paramiko.AutoAddPolicy() automatically accepts unknown host keys — man-in-the-middle attack risk. Use RejectPolicy() and maintain a known_hosts file, or use WarningPolicy() during development only."
+    docs: "https://docs.paramiko.org/en/stable/api/client.html#paramiko.client.MissingHostKeyPolicy"
+
+  - id: "paramiko-disabled-algorithms"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-326"
+    detect:
+      type: "pattern"
+      match: "disabled_algorithms|look_for_keys=False"
+    message: "Paramiko look_for_keys=False or disabled_algorithms detected. Ensure you are not weakening the security configuration. Verify this is intentional and document why."
+
+  - id: "paramiko-password-in-connect"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-259"
+    detect:
+      type: "keyword"
+      match: "password="
+    message: "Hardcoded password in paramiko.connect() call. SSH passwords should come from environment variables or a secrets manager, not from source code."

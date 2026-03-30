@@ -1,0 +1,30 @@
+module: socket
+version_min: "3.0"
+patterns:
+  - id: "socket-bind-all-interfaces"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-605"
+    detect:
+      type: "pattern"
+      match: "\\.bind\\(.*0\\.0\\.0\\.0|bind\\(['\"]0\\.0\\.0\\.0"
+    message: "Socket binding to 0.0.0.0 listens on ALL network interfaces, including public ones. In development or testing, bind to 127.0.0.1 instead. In production, ensure a firewall is in place and you intentionally want public exposure."
+    docs: "https://docs.python.org/3/library/socket.html"
+
+  - id: "socket-no-timeout"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "function_call_missing_arg"
+      function: "socket.socket"
+      missing_arg: "timeout"
+    message: "Socket created without a default timeout. Blocking socket operations can hang indefinitely. Set a timeout: sock.settimeout(30)."
+    docs: "https://docs.python.org/3/library/socket.html#socket.socket.settimeout"
+
+  - id: "socket-reuse-address"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "SO_REUSEADDR|SO_REUSEPORT"
+    message: "SO_REUSEADDR/SO_REUSEPORT allows multiple sockets to bind to the same port. On some systems this can allow other processes to hijack the port. Ensure this is intentional in your deployment environment."

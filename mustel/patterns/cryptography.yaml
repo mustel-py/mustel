@@ -1,0 +1,31 @@
+module: cryptography
+version_min: "2.0"
+patterns:
+  - id: "cryptography-weak-rsa-key"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-326"
+    detect:
+      type: "pattern"
+      match: "generate_private_key\\(.*key_size=512|generate_private_key\\(.*key_size=1024"
+    message: "RSA key size of 512 or 1024 bits is dangerously weak and can be factored. Use a minimum of 2048 bits (key_size=2048). For new systems, prefer 4096 bits or use EC keys (ECDSA/Ed25519) for better performance."
+    docs: "https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/"
+
+  - id: "cryptography-ecb-mode"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-327"
+    detect:
+      type: "pattern"
+      match: "modes\\.ECB\\(\\)|ECB\\(\\)"
+    message: "ECB mode is deterministic — identical plaintext blocks produce identical ciphertext blocks, revealing data patterns. Use CBC with a random IV, or preferably GCM mode which also provides authentication."
+    docs: "https://cryptography.io/en/latest/hazmat/primitives/symmetric-encryption/"
+
+  - id: "cryptography-deprecated-hash"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-327"
+    detect:
+      type: "pattern"
+      match: "hashes\\.MD5\\(\\)|hashes\\.SHA1\\(\\)"
+    message: "MD5 and SHA-1 are cryptographically broken. Use hashes.SHA256() or hashes.SHA3_256() for security-critical hashing."

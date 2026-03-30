@@ -1,0 +1,30 @@
+module: pickle
+version_min: "3.0"
+patterns:
+  - id: "pickle-loads-unsafe"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-502"
+    detect:
+      type: "pattern"
+      match: "pickle\\.loads?\\("
+    message: "pickle.load/loads() deserializes arbitrary Python objects. Never unpickle data received from an untrusted or unauthenticated source — it can execute arbitrary code. Use JSON or another safe serialization format instead."
+    docs: "https://docs.python.org/3/library/pickle.html#pickle-restrict"
+
+  - id: "pickle-unpickler-unsafe"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-502"
+    detect:
+      type: "pattern"
+      match: "pickle\\.Unpickler\\("
+    message: "pickle.Unpickler can execute arbitrary code on malicious input. Restrict deserialization by subclassing Unpickler and overriding find_class(), or switch to a safer format."
+
+  - id: "shelve-unsafe"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-502"
+    detect:
+      type: "pattern"
+      match: "shelve\\.open\\("
+    message: "shelve uses pickle internally and inherits the same arbitrary code execution risk. Do not use shelve to store data from untrusted sources."

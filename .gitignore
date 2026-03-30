@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+*.whl
+*.tar.gz
+
+# Temp test files
+test_output.txt
+test_results.txt
+auth_result.json
+run_tests.py
+retest.py

@@ -1,0 +1,39 @@
+module: asyncio
+version_min: "3.4"
+patterns:
+  - id: "asyncio-bare-except-in-async"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "except\\s*:"
+    message: "Bare except clause catches ALL exceptions including asyncio.CancelledError, KeyboardInterrupt, and SystemExit. In async code this silently swallows cancellation signals. Use 'except Exception:' at minimum, or catch specific exceptions."
+    docs: "https://docs.python.org/3/library/asyncio-task.html#task-cancellation"
+
+  - id: "asyncio-create-task-not-awaited"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "asyncio\\.create_task\\("
+    message: "asyncio.create_task() creates a task that runs concurrently. If you don't keep a reference to it, it may be garbage collected before completing. Store the result: task = asyncio.create_task(coro())."
+    docs: "https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task"
+
+  - id: "asyncio-run-blocking-in-async"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "time\\.sleep\\(|requests\\.get\\(|requests\\.post\\("
+    message: "Blocking call detected. In async functions, blocking calls freeze the entire event loop. Use asyncio.sleep() instead of time.sleep(), and use httpx or aiohttp instead of requests for async HTTP calls."
+    docs: "https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_in_executor"
+
+  - id: "asyncio-gather-no-return-exceptions"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "function_call_missing_arg"
+      function: "asyncio.gather"
+      missing_arg: "return_exceptions"
+    message: "asyncio.gather() without return_exceptions=True will cancel all remaining tasks if one raises an exception. Use return_exceptions=True and handle errors individually, or structure with try/except per awaitable."
+    docs: "https://docs.python.org/3/library/asyncio-task.html#asyncio.gather"

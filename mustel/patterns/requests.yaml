@@ -1,0 +1,53 @@
+module: requests
+version_min: "2.0"
+patterns:
+  - id: "requests-no-timeout"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "function_call_missing_arg"
+      functions:
+        - "requests.get"
+        - "requests.post"
+        - "requests.put"
+        - "requests.delete"
+        - "requests.patch"
+        - "requests.head"
+        - "requests.options"
+        - "requests.request"
+      missing_arg: "timeout"
+    message: "requests call without a timeout will hang indefinitely if the server is unresponsive. Add timeout=30 (or an appropriate value) to every HTTP call."
+    docs: "https://requests.readthedocs.io/en/stable/user/advanced/#timeouts"
+
+  - id: "requests-verify-false"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-295"
+    detect:
+      type: "keyword"
+      match: "verify=False"
+    message: "verify=False disables SSL certificate verification and makes your app vulnerable to man-in-the-middle attacks. Remove this flag or pass verify='/path/to/cacert.pem' instead."
+    docs: "https://requests.readthedocs.io/en/stable/user/advanced/#ssl-cert-verification"
+
+  - id: "requests-hardcoded-auth"
+    severity: "high"
+    category: "security"
+    detect:
+      type: "pattern"
+      match: "auth=\\(['\"].*['\"],\\s*['\"].*['\"]\\)"
+    message: "Hardcoded credentials found in a requests auth tuple. Store credentials in environment variables or a secrets manager, not in source code."
+    docs: "https://requests.readthedocs.io/en/stable/user/authentication/"
+
+  - id: "requests-session-no-timeout"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "function_call_missing_arg"
+      functions:
+        - "session.get"
+        - "session.post"
+        - "session.put"
+        - "session.delete"
+        - "session.patch"
+      missing_arg: "timeout"
+    message: "requests Session call without a timeout will hang indefinitely. Add timeout=30 to requests via session.request() or set session.timeout at session creation."

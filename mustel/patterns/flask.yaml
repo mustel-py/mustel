@@ -1,0 +1,40 @@
+module: flask
+version_min: "1.0"
+patterns:
+  - id: "flask-debug-true"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-94"
+    detect:
+      type: "pattern"
+      match: "app\\.run\\(.*debug=True|debug=True.*app\\.run"
+    message: "Flask running with debug=True in production exposes an interactive debugger and code execution via the browser. Never deploy with debug=True. Set it via environment: app.run(debug=os.environ.get('FLASK_DEBUG', False))."
+    docs: "https://flask.palletsprojects.com/en/stable/quickstart/#debug-mode"
+
+  - id: "flask-hardcoded-secret-key"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-259"
+    detect:
+      type: "pattern"
+      match: "SECRET_KEY\\s*=\\s*['\"].+['\"]|secret_key\\s*=\\s*['\"].+"
+    message: "Flask SECRET_KEY is hardcoded in source code. Anyone with access to the code can forge session cookies. Generate a strong random key and store it in an environment variable: SECRET_KEY = os.environ['SECRET_KEY']."
+    docs: "https://flask.palletsprojects.com/en/stable/config/#SECRET_KEY"
+
+  - id: "flask-no-csrf"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-352"
+    detect:
+      type: "pattern"
+      match: "from flask import.*|import flask"
+    message: "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manually for all state-changing POST endpoints."
+
+  - id: "flask-eval-route"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-94"
+    detect:
+      type: "pattern"
+      match: "eval\\(request\\.|exec\\(request\\."
+    message: "eval() or exec() called with request data — remote code execution vulnerability. Never eval/exec user-supplied input."

@@ -1,0 +1,31 @@
+module: logging
+version_min: "3.0"
+patterns:
+  - id: "logging-sensitive-password"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-532"
+    detect:
+      type: "pattern"
+      match: "log(?:ging)?\\.[a-z]+\\(.*password|log(?:ging)?\\.[a-z]+\\(.*passwd|log(?:ging)?\\.[a-z]+\\(.*secret"
+    message: "Password or secret value may be written to logs. Log files are often accessible to multiple people. Never log credentials. Redact sensitive fields before logging: logger.info('Login attempt for user %s', username)  — not the password."
+    docs: "https://owasp.org/www-community/vulnerabilities/Sensitive_Data_Exposure"
+
+  - id: "logging-sensitive-token"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-532"
+    detect:
+      type: "pattern"
+      match: "log(?:ging)?\\.[a-z]+\\(.*token|log(?:ging)?\\.[a-z]+\\(.*api_key|log(?:ging)?\\.[a-z]+\\(.*auth"
+    message: "Token, API key, or auth data may be written to logs. This can expose credentials in log files, log aggregation systems, and CI/CD output. Never log secrets — log only non-sensitive identifiers."
+
+  - id: "logging-format-string-injection"
+    severity: "medium"
+    category: "security"
+    cwe: "CWE-20"
+    detect:
+      type: "pattern"
+      match: "logging\\.[a-z]+\\(f['\"]|logging\\.[a-z]+\\(.*\\.format\\("
+    message: "Logging call uses f-string or .format() — use % formatting instead: logger.info('User %s logged in', username). f-strings are evaluated immediately even if the log level is disabled, wasting CPU. % args are lazy-evaluated."
+    docs: "https://docs.python.org/3/howto/logging.html#optimization"

@@ -1,0 +1,29 @@
+module: threading
+version_min: "3.0"
+patterns:
+  - id: "threading-mutable-default-shared"
+    severity: "medium"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "shared_data\\s*=\\s*\\[|shared_dict\\s*=\\s*\\{"
+    message: "Shared mutable state detected in what appears to be a multithreaded context. Without proper locking, concurrent reads/writes cause race conditions. Use threading.Lock() to protect all accesses to shared state."
+    docs: "https://docs.python.org/3/library/threading.html#lock-objects"
+
+  - id: "threading-no-lock-on-increment"
+    severity: "medium"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "\\+= 1|\\-= 1"
+    message: "Increment/decrement operations are not atomic in Python's threading module. Two threads incrementing the same counter can produce race conditions. Protect with a Lock: with lock: counter += 1 — or use threading.local() for thread-local state."
+    docs: "https://docs.python.org/3/library/threading.html#lock-objects"
+
+  - id: "threading-daemon-no-join"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "daemon\\s*=\\s*True|setDaemon\\(True\\)"
+    message: "Daemon thread will be abruptly killed when the main thread exits, even if it has unfinished work. Ensure daemon threads only do fire-and-forget work, or use a proper shutdown mechanism like threading.Event."
+    docs: "https://docs.python.org/3/library/threading.html#threading.Thread.daemon"
