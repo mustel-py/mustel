@@ -1,6 +1,6 @@
 # Contributing to mustel
 
-Thanks for wanting to contribute! mustel is designed to make contributions easy — especially adding new pattern files.
+Thanks for wanting to contribute! mustel is designed to make contributions easy - especially adding new pattern files.
 
 ## Quick Setup
 
@@ -66,6 +66,17 @@ patterns:
 - Don't add human-only CLI commands (emoji output, interactive prompts)
 - Don't add features that require API keys or internet access inside mustel
 - Don't change the JSON schema without discussion
+
+## AI-Generated Code Policy
+
+AI coding assistants are welcome here - we use them ourselves. However, **you are responsible for every line you submit.**
+
+Before opening a PR, make sure you:
+1. Understand what the code does and why.
+2. Know the impact it has on mustel's output, schema, or performance.
+3. Have tested it against the benchmark projects locally.
+
+All PRs are reviewed by the maintainers before merging, so don't stress - if something is off, we'll catch it and tell you how to fix it.
 
 ## Code Style
 
