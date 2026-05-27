@@ -8,7 +8,7 @@ version = "0.2.0"
 description = "Non-AI static analysis layer for AI IDEs and coding agents — bug detection, security scanning, and CVE checking via MCP"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
     { name = "Ameya Kulkarni", email = "acclaptop47@gmail.com" },
     { name = "Raunak Nayak", email = "acclaptop47@gmail.com" },
@@ -42,8 +42,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Environment :: Console",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -87,7 +85,7 @@ packages = ["mustel"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py38"
+target-version = "py310"
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]

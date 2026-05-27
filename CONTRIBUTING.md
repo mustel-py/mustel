@@ -71,7 +71,7 @@ patterns:
 
 - We use ruff for linting (naturally)
 - Line length: 88 characters
-- Target Python 3.8+
+- Target Python 3.10+
 
 ## Questions?
 
