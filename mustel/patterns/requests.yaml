@@ -38,6 +38,15 @@ patterns:
     message: "Hardcoded credentials found in a requests auth tuple. Store credentials in environment variables or a secrets manager, not in source code."
     docs: "https://requests.readthedocs.io/en/stable/user/authentication/"
 
+  - id: "requests-ssrf"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-918"
+    detect:
+      type: "pattern"
+      match: "requests\\.(get|post|put|delete|request)\\(\\s*[a-zA-Z0-9_]+\\s*(,|\\))|requests\\.(get|post|put|delete|request)\\(\\s*f['\"]"
+    message: "requests call with a variable URL. If this variable is controlled by user input, it may lead to Server-Side Request Forgery (SSRF). Ensure the URL is strictly validated or fetched from an allowlist."
+
   - id: "requests-session-no-timeout"
     severity: "warning"
     category: "bug"

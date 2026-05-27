@@ -1,0 +1,44 @@
+Please act as a senior academic technical writer specializing in AI deployment infrastructure and static analysis. I need you to write a comprehensive, formal technical research paper based on the data and experiments I will provide.
+
+---
+
+### BACKGROUND CONTEXT: WHAT IS MUSTEL?
+
+**Mustel** is an open-source, deterministic static analysis layer specifically designed for AI IDEs (like Cursor, GitHub Copilot, and Antigravity). 
+
+**The Core Problem:** Normally, when a developer asks an AI to "find security bugs in my project," the AI blindly reads every file (burning massive sums of input tokens), attempts to mentally parse Abstract Syntax Trees (which LLMs are notoriously bad at), and frequently hallucinates bugs that don't exist while missing stealthy context-based vulnerabilities.
+-***************************************
+**The Mustel Solution (The Bare Bones):**
+Mustel runs locally and *deterministically*. Before the AI even looks at the code, Mustel executes a rapid, offline pipeline:
+1. **Scanning Engines:** It runs Ruff (AST linting), Bandit (security AST parsing), pip-audit (dependency checks), and its own custom YAML Regex Pipeline.
+2. **Normalization:** It compiles the disparate outputs into a unified JSON schema.
+3. **Compression:** It collapses the massive diagnostic output into an ultra-dense, <200 character string called the `agent_prompt` (e.g., `mustel found 20 issues: HighSec:S001,S002 | Errs:E001... Use IDs to lookup details in JSON`).
+4. **Handoff:** This string is injected into the AI’s context. The AI no longer has to guess or search; it is handed a literal map of exact line vulnerabilities to fix, completely eliminating the "detection hallucination" phase.
+
+---
+
+### THE EXPERIMENTAL DATA: (From paper.md)
+
+[COPY AND PASTE THE ENTIRE CONTENTS OF YOUR `mustel/benchmarks/paper.md` FILE HERE]
+
+---
+
+### REQUIREMENTS FOR THE PAPER:
+
+Please write the paper using formal academic formatting (Abstract, Introduction, Methodology, Iterative Benchmarking, Result Analysis, and Conclusion).
+
+Ensure the following critical narratives are explored:
+1. **The "Diabolical 100%" & Overfitting vs Honest Recall:** Elaborate deeply on the three distinct recall benchmarks (Tuned 100%, Independent 75%, and Real-World EVFA 55.6%). Explain how traditional textbook benchmarks are easily beaten ("overfitting") by simple regex, necessitating our blind independent tests and real-world evaluation on the 23-file EVFA project. Emphasize that Mustel acts as a *blind deterministic tripwire* rather than a sentient semantic parser, and classify its misses into "regex-addressable" vs "fundamentally undetectable logic bugs."
+2. **The "Hallucination Tax":** Discuss how LLMs struggle with deterministic code parsing and how Mustel removes this variable entirely from the pipeline.
+3. **Economic Overhead (The 34.4% Empirical Savings):** Flesh out the Token Expenditure section. Explain the mathematics of paying for output generation tokens vs passing deterministic injected context, specifically noting the empirical tiktoken measurements that prove output tokens (which cost 3-4x more) are the primary source of savings.
+4. **Citations:** Include proper IEEE style citations for relevant literature (e.g., LLM context limits, static analysis effectiveness, cost of LLM tokens, and any tools mentioned like Ruff, Bandit, Semgrep).
+
+### VISUALS & DIAGRAMS REQUIRED:
+
+Please generate Markdown/Mermaid diagrams to embed within the paper:
+1. **System Architecture Flow (Mermaid):** A flowchart showing the bare bones pipeline: Codebase -> Engines (Ruff/Bandit/pip-audit/Yaml) -> JSON Normalizer -> Agent Prompt Compression -> AI Target patching.
+2. **Token Expenditure Comparative Graph (ASCII or Markdown Chart):** A visual comparison of tokens used in Baseline (Bare AI) vs Augmented (AI + Mustel), highlighting the +65 input overhead vs -684 output savings.
+3. **Recall Comparative Chart (Markdown Bar Chart/Table):** Comparing the three benchmarks: Tuned (100%) vs Independent (75%) vs Real-World EVFA (55.6%).
+4. **Compression Efficacy Graph (Markdown Table):** A comparison of Mustel's 286-character `agent_prompt` vs the verbose raw JSON output of standalone Bandit/Semgrep (12,000+ chars).
+
+Maintain a highly engaging, data-driven, and authoritative tone throughout.

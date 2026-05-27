@@ -7,10 +7,6 @@ Commands:
   mustel review --file <path>    Single file scan
   mustel review --watch          Re-scan on file change
   mustel env                     Python environment snapshot JSON
-  mustel check <pkg>             Package availability check JSON
-  mustel install <pkg>           Safe package install
-  mustel venv                    Venv status JSON
-  mustel venv new                Create .venv in current directory
   mustel serve                   Start MCP server
 """
 
@@ -18,8 +14,6 @@ from __future__ import annotations
 
 import sys
 import json
-import os
-import platform
 
 import click
 
@@ -108,77 +102,6 @@ def env_cmd(pretty: bool):
     from mustel.env import get_env_snapshot
     snap = get_env_snapshot()
     click.echo(json.dumps(snap, indent=2 if pretty else None))
-
-
-# ─────────────────────────────────────────────
-#  mustel check
-# ─────────────────────────────────────────────
-
-@main.command("check")
-@click.argument("package")
-@click.option("--pretty", is_flag=True, default=False, help="Pretty-print JSON output.")
-def check_cmd(package: str, pretty: bool):
-    """
-    Check if a Python package is installed.
-
-    Outputs: {available, version, importable}
-    """
-    from mustel.env import check_package
-    result = check_package(package)
-    click.echo(json.dumps(result, indent=2 if pretty else None))
-
-
-# ─────────────────────────────────────────────
-#  mustel install
-# ─────────────────────────────────────────────
-
-@main.command("install")
-@click.argument("package")
-def install_cmd(package: str):
-    """
-    Install a Python package using the current Python's pip.
-
-    Outputs: {success, message, package}
-    """
-    from mustel.env import install_package
-    result = install_package(package)
-    click.echo(json.dumps(result, indent=2))
-    if not result["success"]:
-        sys.exit(1)
-
-
-# ─────────────────────────────────────────────
-#  mustel venv
-# ─────────────────────────────────────────────
-
-@main.group("venv", invoke_without_command=True)
-@click.pass_context
-def venv_group(ctx: click.Context):
-    """Virtual environment management."""
-    if ctx.invoked_subcommand is None:
-        _venv_status()
-
-
-def _venv_status():
-    """Show venv status for current directory."""
-    from mustel.env import get_venv_status
-    status = get_venv_status(".")
-    click.echo(json.dumps(status, indent=2))
-
-
-@venv_group.command("new")
-@click.argument("name", default=".venv", required=False)
-def venv_new(name: str):
-    """
-    Create a new virtual environment in the current directory.
-
-    NAME defaults to .venv.
-    """
-    from mustel.env import create_venv
-    result = create_venv(name)
-    click.echo(json.dumps(result, indent=2))
-    if not result["success"]:
-        sys.exit(1)
 
 
 # ─────────────────────────────────────────────

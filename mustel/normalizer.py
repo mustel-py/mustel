@@ -149,50 +149,32 @@ def _generate_agent_prompt(
     packages: List[PackageVulnerability],
 ) -> str:
     """
-    Generate the plain English agent_prompt string.
-
-    The agent reads this and knows exactly what to fix and in what order.
-    This is the key innovation — the AI doesn't need to parse the full JSON.
+    Generate the ultra-compressed plain English agent_prompt string.
+    Target length: < 200 characters.
     """
     total = len(errors) + len(security) + len(warnings) + len(packages)
 
     if total == 0:
-        return "mustel found no issues. The project looks clean."
+        return "mustel found 0 issues. Project clean."
 
-    parts = []
-    parts.append(f"mustel found {total} issue(s). Fix in this order:")
+    groups = []
+    
+    high_sec = [s.id for s in security if s.severity in ("high", "critical")]
+    if high_sec: groups.append(f"HighSec:{','.join(high_sec)}")
+        
+    pkg_id = [p.id for p in packages]
+    if pkg_id: groups.append(f"PkgVuln:{','.join(pkg_id)}")
+    
+    errs = [e.id for e in errors]
+    if errs: groups.append(f"Errs:{','.join(errs)}")
+        
+    med_sec = [s.id for s in security if s.severity not in ("high", "critical")]
+    if med_sec: groups.append(f"MedSec:{','.join(med_sec)}")
+        
+    warns = [w.id for w in warnings]
+    if warns: groups.append(f"Warns:{','.join(warns)}")
 
-    # Priority 1: High/critical security issues
-    high_security = [s for s in security if s.severity in ("high", "critical")]
-    if high_security:
-        parts.append(f"\nPRIORITY 1 — {len(high_security)} HIGH security issue(s):")
-        for s in high_security[:5]:  # top 5
-            parts.append(f"  [{s.id}] {s.file}:{s.line} — {s.message[:100]}")
-
-    # Priority 2: Critical package vulnerabilities
-    if packages:
-        parts.append(f"\nPRIORITY 2 — {len(packages)} package vulnerability(ies):")
-        for p in packages[:5]:
-            parts.append(f"  [{p.id}] {p.package} {p.installed_version} — {p.message[:100]}")
-
-    # Priority 3: Errors
-    if errors:
-        parts.append(f"\nPRIORITY 3 — {len(errors)} error(s):")
-        for e in errors[:5]:
-            parts.append(f"  [{e.id}] {e.file}:{e.line} — {e.message[:100]}")
-
-    # Priority 4: Medium security issues
-    medium_security = [s for s in security if s.severity not in ("high", "critical")]
-    if medium_security:
-        parts.append(f"\nPRIORITY 4 — {len(medium_security)} medium security issue(s):")
-        for s in medium_security[:3]:
-            parts.append(f"  [{s.id}] {s.file}:{s.line} — {s.message[:100]}")
-
-    # Priority 5: Warnings
-    if warnings:
-        parts.append(f"\nPRIORITY 5 — {len(warnings)} warning(s). Address after the above.")
-
-    return "\n".join(parts)
+    return f"mustel found {total} issues: {' | '.join(groups)}. Use IDs to lookup details in JSON."
 
 
 # ─────────────────────────────────────────────

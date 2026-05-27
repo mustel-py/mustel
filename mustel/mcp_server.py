@@ -106,23 +106,6 @@ def start_mcp_server():
                     "properties": {},
                 },
             ),
-            Tool(
-                name="check_package",
-                description=(
-                    "Check if a Python package is installed and if it has known vulnerabilities. "
-                    "Call before suggesting an import to avoid recommending vulnerable packages."
-                ),
-                inputSchema={
-                    "type": "object",
-                    "properties": {
-                        "package_name": {
-                            "type": "string",
-                            "description": "Name of the package to check (e.g. 'requests').",
-                        },
-                    },
-                    "required": ["package_name"],
-                },
-            ),
         ]
 
     @server.call_tool()
@@ -147,14 +130,6 @@ def start_mcp_server():
                 from mustel.env import get_env_snapshot
                 snap = get_env_snapshot()
                 return [TextContent(type="text", text=json.dumps(snap, indent=2))]
-
-            elif name == "check_package":
-                from mustel.env import check_package
-                pkg_name = arguments.get("package_name", "")
-                if not pkg_name:
-                    return [TextContent(type="text", text=json.dumps({"error": "package_name is required"}))]
-                result = check_package(pkg_name)
-                return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
             else:
                 return [TextContent(type="text", text=json.dumps({"error": f"Unknown tool: {name}"}))]

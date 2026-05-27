@@ -1,0 +1,53 @@
+==============================================================
+  TOKEN TEST PROMPTS — project_auth
+==============================================================
+
+Use these prompts to manually compare AI token usage.
+Paste Version A into an AI IDE, count tokens used.
+Then paste Version B, count tokens used.
+The difference measures mustel's token savings.
+
+--------------------------------------------------------------
+  VERSION A — Without mustel (baseline)
+--------------------------------------------------------------
+
+Review the following Flask application for bugs and security
+issues. Fix everything you find. Show me each fix with before
+and after code.
+
+File: benchmarks/projects/project_auth/app.py
+
+[paste the full app.py contents here]
+
+
+--------------------------------------------------------------
+  VERSION B — With mustel context injected
+--------------------------------------------------------------
+
+[MUSTEL REPORT — paste the agent_prompt from the latest
+benchmark run here, then add the same request below]
+
+Review the following Flask application for bugs and security
+issues. Fix everything you find. Show me each fix with before
+and after code.
+
+File: benchmarks/projects/project_auth/app.py
+
+[paste the full app.py contents here]
+
+
+--------------------------------------------------------------
+  HOW TO MEASURE
+--------------------------------------------------------------
+
+1. Open a fresh AI IDE session (no prior context)
+2. Paste Version A, let the AI respond fully
+3. Record total tokens used (input + output)
+4. Open another fresh session
+5. Paste Version B, let the AI respond fully
+6. Record total tokens used (input + output)
+
+Token delta = (Version A tokens) - (Version B tokens)
+Token savings % = (delta / Version A tokens) * 100
+
+Target: 15-30% fewer tokens with mustel context

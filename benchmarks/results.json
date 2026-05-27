@@ -1,0 +1,719 @@
+[
+  {
+    "timestamp": "2026-04-10T15:31:24.943572+00:00",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 10,
+    "false_positives": [
+      {
+        "id": "E001",
+        "file": "app.py",
+        "line": 27,
+        "message": "Module level import not at top of file"
+      },
+      {
+        "id": "E002",
+        "file": "app.py",
+        "line": 55,
+        "message": "Line too long (90 > 88)"
+      },
+      {
+        "id": "S001",
+        "file": "app.py",
+        "line": 11,
+        "message": "shell=True passes the command through the shell \u2014 command injection risk if any part of the command "
+      },
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 18,
+        "message": "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual"
+      },
+      {
+        "id": "S007",
+        "file": "app.py",
+        "line": 76,
+        "message": "subprocess call with shell=True identified, security issue."
+      },
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the ex"
+      },
+      {
+        "id": "W001",
+        "file": "app.py",
+        "line": 35,
+        "message": "Missing return type annotation for public function `get_user`"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 47,
+        "message": "Missing return type annotation for public function `register`"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 61,
+        "message": "Missing return type annotation for public function `fetch_url`"
+      },
+      {
+        "id": "W004",
+        "file": "app.py",
+        "line": 72,
+        "message": "Missing return type annotation for public function `run_command`"
+      }
+    ],
+    "scan_time_ms": 2660,
+    "agent_prompt": "mustel found 15 issue(s). Fix in this order:\n\nPRIORITY 1 \u2014 7 HIGH security issue(s):\n  [S001] app.py:11 \u2014 shell=True passes the command through the shell \u2014 command injection risk if any part of the command \n  [S003] app.py:21 \u2014 Flask SECRET_KEY is hardcoded in source code. Anyone with access to the code can forge session cooki\n  [S004] app.py:38 \u2014 Possible SQL injection vector through string-based query construction\n  [S005] app.py:53 \u2014 Use of weak MD5 hash for security. Consider usedforsecurity=False\n  [S006] app.py:75 \u2014 shell=True passes the command through the shell \u2014 command injection risk if any part of the command \n\nPRIORITY 3 \u2014 3 error(s):\n  [E001] app.py:27 \u2014 Module level import not at top of file\n  [E002] app.py:55 \u2014 Line too long (90 > 88)\n  [E003] app.py:67 \u2014 requests call without a timeout will hang indefinitely if the server is unresponsive. Add timeout=30\n\nPRIORITY 4 \u2014 1 medium security issue(s):\n  [S002] app.py:18 \u2014 Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual\n\nPRIORITY 5 \u2014 4 warning(s). Address after the above.",
+    "agent_prompt_length": 1098,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T15:50:17.325313+00:00",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 10,
+    "false_positives": [
+      {
+        "id": "E001",
+        "file": "app.py",
+        "line": 27,
+        "message": "Module level import not at top of file"
+      },
+      {
+        "id": "E002",
+        "file": "app.py",
+        "line": 55,
+        "message": "Line too long (90 > 88)"
+      },
+      {
+        "id": "S001",
+        "file": "app.py",
+        "line": 11,
+        "message": "shell=True passes the command through the shell \u2014 command injection risk if any part of the command "
+      },
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 18,
+        "message": "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual"
+      },
+      {
+        "id": "S007",
+        "file": "app.py",
+        "line": 76,
+        "message": "subprocess call with shell=True identified, security issue."
+      },
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the ex"
+      },
+      {
+        "id": "W001",
+        "file": "app.py",
+        "line": 35,
+        "message": "Missing return type annotation for public function `get_user`"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 47,
+        "message": "Missing return type annotation for public function `register`"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 61,
+        "message": "Missing return type annotation for public function `fetch_url`"
+      },
+      {
+        "id": "W004",
+        "file": "app.py",
+        "line": 72,
+        "message": "Missing return type annotation for public function `run_command`"
+      }
+    ],
+    "scan_time_ms": 3609,
+    "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 166,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T15:50:27.011355+00:00",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 10,
+    "false_positives": [
+      {
+        "id": "E001",
+        "file": "app.py",
+        "line": 27,
+        "message": "Module level import not at top of file"
+      },
+      {
+        "id": "E002",
+        "file": "app.py",
+        "line": 55,
+        "message": "Line too long (90 > 88)"
+      },
+      {
+        "id": "S001",
+        "file": "app.py",
+        "line": 11,
+        "message": "shell=True passes the command through the shell \u2014 command injection risk if any part of the command "
+      },
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 18,
+        "message": "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual"
+      },
+      {
+        "id": "S007",
+        "file": "app.py",
+        "line": 76,
+        "message": "subprocess call with shell=True identified, security issue."
+      },
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the ex"
+      },
+      {
+        "id": "W001",
+        "file": "app.py",
+        "line": 35,
+        "message": "Missing return type annotation for public function `get_user`"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 47,
+        "message": "Missing return type annotation for public function `register`"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 61,
+        "message": "Missing return type annotation for public function `fetch_url`"
+      },
+      {
+        "id": "W004",
+        "file": "app.py",
+        "line": 72,
+        "message": "Missing return type annotation for public function `run_command`"
+      }
+    ],
+    "scan_time_ms": 1718,
+    "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 166,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T15:53:16.737872+00:00",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 5,
+    "false_positives": [
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the ex"
+      },
+      {
+        "id": "W001",
+        "file": "app.py",
+        "line": 35,
+        "message": "Missing return type annotation for public function `get_user`"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 47,
+        "message": "Missing return type annotation for public function `register`"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 61,
+        "message": "Missing return type annotation for public function `fetch_url`"
+      },
+      {
+        "id": "W004",
+        "file": "app.py",
+        "line": 72,
+        "message": "Missing return type annotation for public function `run_command`"
+      }
+    ],
+    "scan_time_ms": 1845,
+    "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 166,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T15:53:40.245701+00:00",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 0,
+    "false_positives": [],
+    "scan_time_ms": 1809,
+    "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 166,
+    "all_targets_met": true
+  },
+  {
+    "timestamp": "2026-04-10T16:01:13.170370+00:00",
+    "project": "project_backend",
+    "recall_score": 0.2,
+    "recall_detail": [
+      "jwt_verify_false"
+    ],
+    "missed": [
+      "hardcoded_aws",
+      "path_traversal",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "false_positive_count": 12,
+    "false_positives": [
+      {
+        "id": "E001",
+        "file": "app.py",
+        "line": 18,
+        "message": "`fastapi.Header` imported but unused"
+      },
+      {
+        "id": "E003",
+        "file": "app.py",
+        "line": 56,
+        "message": "Async functions should not use os.path methods, use trio.Path or anyio.path"
+      },
+      {
+        "id": "E004",
+        "file": "app.py",
+        "line": 59,
+        "message": "Async functions should not open files with blocking methods like `open`"
+      },
+      {
+        "id": "E005",
+        "file": "app.py",
+        "line": 68,
+        "message": "Async functions should not call blocking HTTP methods"
+      },
+      {
+        "id": "E006",
+        "file": "app.py",
+        "line": 74,
+        "message": "Raw Request object used in endpoint. Consider using FastAPI's typed query parameters and Pydantic mo"
+      },
+      {
+        "id": "E007",
+        "file": "app.py",
+        "line": 82,
+        "message": "Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to di"
+      },
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 44,
+        "message": "`try`-`except`-`pass` detected, consider logging the exception"
+      },
+      {
+        "id": "S003",
+        "file": "app.py",
+        "line": 79,
+        "message": "Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible secu"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 35,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 46,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W005",
+        "file": "app.py",
+        "line": 55,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W006",
+        "file": "app.py",
+        "line": 58,
+        "message": "Blank line contains whitespace"
+      }
+    ],
+    "scan_time_ms": 2849,
+    "agent_prompt": "mustel found 17 issues: HighSec:S001,S002 | Errs:E001,E002,E003,E004,E005,E006,E007 | MedSec:S003 | Warns:W001,W002,W003,W004,W005,W006,W007. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 176,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T16:04:45.872546+00:00",
+    "project": "project_backend",
+    "recall_score": 0.4,
+    "recall_detail": [
+      "jwt_verify_false",
+      "path_traversal"
+    ],
+    "missed": [
+      "hardcoded_aws",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "false_positive_count": 12,
+    "false_positives": [
+      {
+        "id": "E001",
+        "file": "app.py",
+        "line": 18,
+        "message": "`fastapi.Header` imported but unused"
+      },
+      {
+        "id": "E003",
+        "file": "app.py",
+        "line": 56,
+        "message": "Async functions should not use os.path methods, use trio.Path or anyio.path"
+      },
+      {
+        "id": "E004",
+        "file": "app.py",
+        "line": 59,
+        "message": "Async functions should not open files with blocking methods like `open`"
+      },
+      {
+        "id": "E005",
+        "file": "app.py",
+        "line": 74,
+        "message": "Raw Request object used in endpoint. Consider using FastAPI's typed query parameters and Pydantic mo"
+      },
+      {
+        "id": "E006",
+        "file": "app.py",
+        "line": 82,
+        "message": "Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to di"
+      },
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 44,
+        "message": "`try`-`except`-`pass` detected, consider logging the exception"
+      },
+      {
+        "id": "S004",
+        "file": "app.py",
+        "line": 68,
+        "message": "requests call with a variable URL. If this variable is controlled by user input, it may lead to Serv"
+      },
+      {
+        "id": "S005",
+        "file": "app.py",
+        "line": 79,
+        "message": "Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible secu"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 35,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 46,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W005",
+        "file": "app.py",
+        "line": 55,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W006",
+        "file": "app.py",
+        "line": 58,
+        "message": "Blank line contains whitespace"
+      }
+    ],
+    "scan_time_ms": 1857,
+    "agent_prompt": "mustel found 18 issues: HighSec:S001,S002,S004 | Errs:E001,E002,E003,E004,E005,E006 | MedSec:S003,S005 | Warns:W001,W002,W003,W004,W005,W006,W007. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 181,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T16:05:39.549407+00:00",
+    "project": "project_backend",
+    "recall_score": 0.8,
+    "recall_detail": [
+      "jwt_verify_false",
+      "path_traversal",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "missed": [
+      "hardcoded_aws"
+    ],
+    "false_positive_count": 9,
+    "false_positives": [
+      {
+        "id": "E001",
+        "file": "app.py",
+        "line": 18,
+        "message": "`fastapi.Header` imported but unused"
+      },
+      {
+        "id": "E004",
+        "file": "app.py",
+        "line": 59,
+        "message": "Async functions should not open files with blocking methods like `open`"
+      },
+      {
+        "id": "E005",
+        "file": "app.py",
+        "line": 74,
+        "message": "Raw Request object used in endpoint. Consider using FastAPI's typed query parameters and Pydantic mo"
+      },
+      {
+        "id": "E006",
+        "file": "app.py",
+        "line": 82,
+        "message": "Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to di"
+      },
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 44,
+        "message": "`try`-`except`-`pass` detected, consider logging the exception"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 35,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 46,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W005",
+        "file": "app.py",
+        "line": 55,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W006",
+        "file": "app.py",
+        "line": 58,
+        "message": "Blank line contains whitespace"
+      }
+    ],
+    "scan_time_ms": 3089,
+    "agent_prompt": "mustel found 18 issues: HighSec:S001,S002,S004 | Errs:E001,E002,E003,E004,E005,E006 | MedSec:S003,S005 | Warns:W001,W002,W003,W004,W005,W006,W007. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 181,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T16:06:24.268722+00:00",
+    "project": "project_backend",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_aws",
+      "jwt_verify_false",
+      "path_traversal",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "missed": [],
+    "false_positive_count": 5,
+    "false_positives": [
+      {
+        "id": "S004",
+        "file": "app.py",
+        "line": 44,
+        "message": "`try`-`except`-`pass` detected, consider logging the exception"
+      },
+      {
+        "id": "W002",
+        "file": "app.py",
+        "line": 35,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W003",
+        "file": "app.py",
+        "line": 46,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W005",
+        "file": "app.py",
+        "line": 55,
+        "message": "Blank line contains whitespace"
+      },
+      {
+        "id": "W006",
+        "file": "app.py",
+        "line": 58,
+        "message": "Blank line contains whitespace"
+      }
+    ],
+    "scan_time_ms": 1841,
+    "agent_prompt": "mustel found 20 issues: HighSec:S001,S002,S003,S004,S006 | Errs:E001,E002,E003,E004,E005,E006 | MedSec:S005,S007 | Warns:W001,W002,W003,W004,W005,W006,W007. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 191,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-10T16:06:47.726755+00:00",
+    "project": "project_backend",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_aws",
+      "jwt_verify_false",
+      "path_traversal",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "missed": [],
+    "false_positive_count": 0,
+    "false_positives": [],
+    "scan_time_ms": 1800,
+    "agent_prompt": "mustel found 20 issues: HighSec:S001,S002,S003,S004,S006 | Errs:E001,E002,E003,E004,E005,E006 | MedSec:S005,S007 | Warns:W001,W002,W003,W004,W005,W006,W007. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 191,
+    "all_targets_met": true
+  },
+  {
+    "timestamp": "2026-04-22T09:43:49.059439+00:00",
+    "project": "project_auth",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 2,
+    "false_positives": [
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 18,
+        "message": "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual"
+      },
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the ex"
+      }
+    ],
+    "scan_time_ms": 3162,
+    "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 166,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-22T10:15:38.851025+00:00",
+    "project": "project_auth",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 2,
+    "false_positives": [
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 18,
+        "message": "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual"
+      },
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the ex"
+      }
+    ],
+    "scan_time_ms": 3115,
+    "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 166,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-04-22T10:15:43.965528+00:00",
+    "project": "project_backend",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_aws",
+      "jwt_verify_false",
+      "path_traversal",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "missed": [],
+    "false_positive_count": 0,
+    "false_positives": [],
+    "scan_time_ms": 4251,
+    "agent_prompt": "mustel found 20 issues: HighSec:S001,S002,S003,S004,S006 | Errs:E001,E002,E003,E004,E005,E006 | MedSec:S005,S007 | Warns:W001,W002,W003,W004,W005,W006,W007. Use IDs to lookup details in JSON.",
+    "agent_prompt_length": 191,
+    "all_targets_met": false
+  }
+]

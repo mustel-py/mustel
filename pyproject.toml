@@ -5,18 +5,42 @@ build-backend = "hatchling.build"
 [project]
 name = "mustel"
 version = "0.2.0"
-description = "Non-AI bug and security detection layer for AI IDEs and coding agents"
+description = "Non-AI static analysis layer for AI IDEs and coding agents — bug detection, security scanning, and CVE checking via MCP"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.8"
 authors = [
-    { name = "Ameya Kulkarni, Raunak Nayak", email = "acclaptop47@gmail.com" },
+    { name = "Ameya Kulkarni", email = "acclaptop47@gmail.com" },
+    { name = "Raunak Nayak", email = "acclaptop47@gmail.com" },
 ]
-keywords = ["python", "security", "linter", "bug-detection", "ide", "mcp", "ai-agent"]
+keywords = [
+    "python",
+    "security",
+    "linter",
+    "bug-detection",
+    "ide",
+    "mcp",
+    "mcp-server",
+    "ai-agent",
+    "ai-coding",
+    "static-analysis",
+    "code-review",
+    "vulnerability-scanner",
+    "cursor",
+    "windsurf",
+    "claude",
+    "bandit",
+    "ruff",
+    "pip-audit",
+    "devtools",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -25,7 +49,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Security",
+    "Topic :: Utilities",
 ]
 
 dependencies = [
@@ -38,11 +64,20 @@ dependencies = [
     "click>=8.0.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pre-commit>=3.0.0",
+    "build>=1.0.0",
+    "twine>=4.0.0",
+]
+
 [project.scripts]
 mustel = "mustel.cli:main"
 
 [project.urls]
 Homepage = "https://mustel.netlify.app"
+Documentation = "https://mustel.netlify.app"
 Repository = "https://github.com/mustel-py/mustel"
 Issues = "https://github.com/mustel-py/mustel/issues"
 Changelog = "https://github.com/mustel-py/mustel/blob/main/CHANGELOG.md"

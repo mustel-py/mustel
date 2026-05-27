@@ -7,7 +7,8 @@ Thanks for wanting to contribute! mustel is designed to make contributions easy 
 ```bash
 git clone https://github.com/mustel-py/mustel.git
 cd mustel
-pip install -e .
+pip install -e ".[dev]"
+pre-commit install
 ```
 
 ## How to Run Tests

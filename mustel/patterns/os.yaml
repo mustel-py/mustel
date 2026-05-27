@@ -17,7 +17,7 @@ patterns:
     cwe: "CWE-22"
     detect:
       type: "pattern"
-      match: "os\\.path\\.join\\(.*request|os\\.path\\.join\\(.*input\\(|os\\.path\\.join\\(.*argv"
+      match: "os\\.path\\.join\\(.*request|os\\.path\\.join\\(.*input\\(|os\\.path\\.join\\([^,\\)]+,\\s*[a-zA-Z_][a-zA-Z0-9_]*(name|path|file|dir|filename|filepath)\\s*\\)|os\\.path\\.join\\([^,\\)]+,\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\)"
     message: "os.path.join() called with potentially user-controlled input — path traversal risk. Validate and sanitize the user input, or use pathlib.Path and check that the resolved path stays within the expected directory."
     docs: "https://owasp.org/www-community/attacks/Path_Traversal"
 

@@ -1,0 +1,26 @@
+[
+  {
+    "tool": "mustel",
+    "security_findings": 21,
+    "error_findings": 4,
+    "total_findings": 39,
+    "time_ms": 4283,
+    "output_size_chars": 18322,
+    "agent_prompt_chars": 286
+  },
+  {
+    "tool": "bandit (standalone)",
+    "security_findings": 13,
+    "error_findings": 0,
+    "total_findings": 13,
+    "time_ms": 1211,
+    "output_size_chars": 12786,
+    "agent_prompt_chars": 0
+  },
+  {
+    "tool": "semgrep",
+    "total_findings": "parse_error",
+    "time_ms": 15996,
+    "output_size_chars": 0
+  }
+]

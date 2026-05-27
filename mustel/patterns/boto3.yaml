@@ -1,0 +1,11 @@
+module: boto3
+version_min: "1.0"
+patterns:
+  - id: "boto3-hardcoded-keys"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-798"
+    detect:
+      type: "pattern"
+      match: "aws_access_key_id|aws_secret_access_key"
+    message: "Hardcoded AWS credentials found. Use IAM roles, ~/.aws/credentials, or environment variables instead of hardcoding keys in source code."

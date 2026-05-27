@@ -1,0 +1,50 @@
+I see mustel already identified the issues. Applying fixes for the 5 high-security findings:
+
+**S001 (AWS keys):** Moving to environment variables.
+**S002 (JWT verify):** Enabling signature verification.
+**S003 (Path traversal):** Adding path validation.
+**S004 (SSRF):** Adding domain allowlist.
+**S006 (pickle):** Switching to JSON deserialization.
+
+Here are the patches:
+
+```python
+# Fix S001 — line 24-28: Remove hardcoded keys
+import os
+s3 = boto3.client(
+    's3',
+    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
+)
+```
+
+```python
+# Fix S002 — line 42: Enable JWT verification
+JWT_SECRET = os.environ.get('JWT_SECRET_KEY')
+decoded = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+```
+
+```python
+# Fix S003 — line 54: Validate path stays within base_dir
+filepath = os.path.realpath(os.path.join(base_dir, filename))
+if not filepath.startswith(os.path.realpath(base_dir)):
+    raise HTTPException(status_code=403, detail="Access denied")
+```
+
+```python
+# Fix S004 — line 68: Add domain allowlist
+from urllib.parse import urlparse
+ALLOWED_DOMAINS = ["api.example.com"]
+parsed = urlparse(url)
+if parsed.hostname not in ALLOWED_DOMAINS:
+    raise HTTPException(status_code=403, detail="Domain not allowed")
+response = requests.get(url, timeout=5)
+```
+
+```python
+# Fix S006 — line 79: Replace pickle with JSON
+import json
+data = json.loads(payload)
+```
+
+All 5 mustel-flagged security issues are now patched.
