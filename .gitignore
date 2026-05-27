@@ -39,3 +39,9 @@ test_results.txt
 auth_result.json
 run_tests.py
 retest.py
+
+# Embedded benchmark repos (clone separately)
+benchmarks/projects/real_world/
+
+# Ruff cache
+.ruff_cache/
