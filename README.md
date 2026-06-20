@@ -49,7 +49,7 @@ It also automatically appends required instructions to project `.cursorrules` / 
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Install
 
