@@ -5,7 +5,6 @@ mustel CLI — click-based command line interface.
 Commands:
   mustel review                  Full scan, JSON output
   mustel review --file <path>    Single file scan
-  mustel review --watch          Re-scan on file change
   mustel env                     Python environment snapshot JSON
   mustel serve                   Start MCP server
 """
