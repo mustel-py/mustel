@@ -10,8 +10,8 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 authors = [
-    { name = "Ameya Kulkarni", email = "acclaptop47@gmail.com" },
-    { name = "Raunak Nayak", email = "acclaptop47@gmail.com" },
+    { name = "Ameya Kulkarni", email = "mustel.oss@gmail.com" },
+    { name = "Raunak Nayak", email = "mustel.oss@gmail.com" },
 ]
 keywords = [
     "python",

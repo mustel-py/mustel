@@ -1,49 +1,49 @@
-# mustel (0.3.0)
+# mustel
 
-**The Agent-Native Linter & Guardrail for AI IDEs and Coding Agents.**
+<p align="center">
+  <img src="logo.png" width="220" alt="Mustel Logo">
+</p>
 
-mustel is a high-speed, zero-config static analysis and context layer built specifically to make AI coding agents (Cursor, Windsurf, Claude Code, Claude Desktop) cheaper, faster, and hallucination-free. 
+An agent-native static analysis and context layer for AI-assisted development environments (Cursor, Windsurf, Claude Code, Claude Desktop). 
 
-By integrating locally into your file save loops and git hooks, mustel gives AI agents deterministic ground truth and API structures in token-optimized formats.
+Mustel hooks into file save loops and git events, executing lint rules and generating compressed repository layout maps to minimize input token overhead and intercept compile errors before they reach the user.
 
 ```text
 Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant Fixes
 ```
 
-[![PyPI version](https://img.shields.io/pypi/v/mustel.svg)](https://pypi.org/project/mustel/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ---
 
-## ⚡ Key Innovations in v0.3.0
+## Technical Architecture & Design
 
-### 1. Adaptive Execution Modes (Zero CLI Config)
-*   **Dev Mode (Default)**: Automatically triggered on editor file saves or MCP reviews. Runs only local checks (Ruff, Oxlint, custom patterns) and skips all network operations/npm registry calls. Latency is **< 30ms** via stat-based file caching (`mtime` + `size`).
-*   **Audit Mode**: Triggered automatically in Git hooks (`pre-commit`) or CI pipelines (detecting `CI` or `GITHUB_ACTIONS`). Runs deep security (Bandit) and package vulnerability scans (pip-audit).
+### 1. Dual-Execution Modes (Zero Configuration)
+Mustel switches its execution profile dynamically based on environmental indicators:
+*   **Dev Mode (Default)**: Automatically triggered on editor save events and MCP reviews. Runs only local, non-networked checks (Ruff, Oxlint, local pattern files) and leverages a stat-based cache (checking file modification time and size) to keep incremental latency under 30ms.
+*   **Audit Mode**: Triggered inside pre-commit hooks or CI/CD pipelines (when `CI`, `GITHUB_ACTIONS`, or `PRE_COMMIT` variables are present). Enables security checks (Bandit) and package dependency audits (pip-audit).
 
-### 2. Repository Mapping (`get_code_map` / `mustel map`)
-A dedicated tool that serves a compact, token-dense skeleton (classes, method signatures, arguments, and docstrings) of your codebase. Instead of the AI reading raw source code files to understand your repository (which costs 10,000+ tokens), it reads the map once (**saving up to 95% input tokens**).
+### 2. Repository Mapping (get_code_map)
+Exposes codebase mapping tools via the `get_code_map` MCP tool and `mustel map` CLI command. It parses the project structures using AST parsing for Python/Jupyter and regex-based scanning for JS/TS, producing a highly compressed code skeleton (classes, method signatures, arguments, and docstrings) that fits under 1,500 tokens for average repositories, reducing initial context-loading token consumption by up to 95%.
 
 ### 3. Save Loop Guardrails
-On file saves, the editor triggers `review_file`. mustel instantly scans the code for syntax or import errors. If found, it appends a high-priority `=== MUSTEL GUARDRAIL ALERT ===` block in the tool output, directing the AI agent to resolve compile/syntax errors in 1 turn before notifying the user.
+Mustel intercepts file save events via the editor. If syntax, compile, or import errors are found, it inserts a high-priority `=== MUSTEL GUARDRAIL ALERT ===` block in the tool output, directing the AI agent to resolve compiling issues in 1 turn before presenting the changes to the user.
 
-### 4. Multi-Language & Jupyter Support
-*   **JS/TS Support**: Integrated `oxlint` engine for lightning-fast frontend checking.
-*   **Jupyter Notebooks (`.ipynb`)**: Extract and parse code cells JSON, running all custom Python patterns against data science notebooks.
-*   **Cloud & Data Science Rule Sets**: Added optimized patterns for `pandas`, `numpy`, `streamlit`, `google_cloud`, `azure`, and `boto3`.
+### 4. Language & Environment Support
+*   **Javascript & TypeScript**: Integrated `oxlint` engine to provide sub-millisecond JS/TS checks.
+*   **Jupyter Notebooks**: Native parser that extracts Python code cells from `.ipynb` JSON models, running all custom rules against notebooks.
+*   **Rule Sets**: Local YAML rule matching engine supporting standard libraries and data frameworks (`pandas`, `numpy`, `streamlit`, `google_cloud`, `azure`, and `boto3`).
 
-### 5. Zero-Config Global IDE Bootstrapping
-When first run (or via `mustel bootstrap`), mustel automatically registers its MCP server globally across:
-*   **Cursor**: `%USERPROFILE%\.cursor\mcp.json`
+### 5. Automated IDE Configuration (bootstrap)
+Registers Mustel as a global MCP server across active user directories:
+*   **Cursor**: `%USERPROFILE%\.cursor\mcp.json` (Windows) / `~/.cursor/mcp.json` (Mac/Linux)
 *   **Windsurf**: `~/.codeium/windsurf/mcp_config.json`
 *   **Claude Code**: `~/.claude.json`
-*   **Claude Desktop**: OS-specific AppData configs
-It also automatically injects guardrail rules into `.cursorrules` / `.windsurfrules` and installs git pre-commit hooks.
+*   **Claude Desktop**: OS-specific configuration directories
+
+It also automatically appends required instructions to project `.cursorrules` / `.windsurfrules` and configures git pre-commit hooks.
 
 ---
 
-## 🚀 Quick Start
+## Installation & Quick Start
 
 ### Install
 
@@ -51,66 +51,65 @@ It also automatically injects guardrail rules into `.cursorrules` / `.windsurfru
 pip install mustel
 ```
 
-### Auto-Configure (Bootstrap)
+### Configure
 
 ```bash
-mustel bootstrap          # Setup current project local rules and git hooks
-mustel bootstrap --global # Register MCP server globally across Cursor, Windsurf, Claude
+# Register MCP server globally across Cursor, Windsurf, and Claude
+mustel bootstrap --global
+
+# Configure local rules and install pre-commit hook in the current workspace
+mustel bootstrap
 ```
 
-### Scan Your Project
+### CLI Reference
 
 ```bash
-mustel review             # Runs Dev Mode (fast incremental lint)
-mustel review --audit     # Force deep security/CVE Audit Mode
-mustel review --file x.py # Scan a single file
-mustel map                # Print the codebase skeleton mapping (Text)
+# Run local incremental review (Dev Mode)
+mustel review
+
+# Force deep security and dependency audits (Audit Mode)
+mustel review --audit
+
+# Review a single target file
+mustel review --file mustel/runner.py
+
+# Print the repository codebase map
+mustel map
 ```
 
 ---
 
-## 🛠️ MCP Server Tools
+## MCP Server Specification
 
-AI IDEs connect via stdio transport using `mustel serve`. The server exposes these tools:
+Mustel runs an MCP server over stdio transport via `mustel serve`. The exposed tools are documented below:
 
-| MCP Tool | Arguments | Output | Description |
+| MCP Tool | Arguments | Output Type | Description |
 | :--- | :--- | :--- | :--- |
-| `review` | `path`, `skip_packages`, `compact`, `audit` | Compact JSON | Concurrently scans workspace files. |
-| `review_file` | `file_path`, `compact` | JSON + Alert | Local scan for active save loops (triggers guardrails). |
-| `get_code_map` | `path` | Tree Text | Compact AST/regex code mapping skeleton. |
-| `env` | - | JSON | Current Python environment snapshot. |
-| `bootstrap` | `global_install` | Text | Re-configures IDE settings and hooks. |
+| `review` | `path` (str), `skip_packages` (bool), `compact` (bool), `audit` (bool) | JSON | Concurrently scans files in the workspace. |
+| `review_file` | `file_path` (str), `compact` (bool) | JSON + Text | Scans single file on save (triggers guardrails). |
+| `get_code_map` | `path` (str) | Text | Returns a compact AST/regex codebase skeleton. |
+| `env` | None | JSON | Returns a snapshot of the Python environment. |
+| `bootstrap` | `global_install` (bool) | Text | Re-configures IDE settings and hook scripts. |
 
 ---
 
-## 📊 Empirical Benchmarks
-
-Tested on real open-source targets (`requests`, `click`, `watchdog`, `bandit`, `mcp`):
-
-*   **Recall**: **100%** on standard vulnerability checks.
-*   **Incremental Latency**: **26 - 32 ms** for typical projects; **79 - 114 ms** for repos with 100+ files.
-*   **Token Overhead**: Compressed `agent_prompt` summary fits under **191 characters** (under 50 tokens).
-*   **Token Reduction**: **34.4% net savings** in AI-agent review workflows (empirical tiktoken measurement).
-
----
-
-## 📂 Codebase Layout
+## Codebase Layout
 
 ```text
 mustel/
 ├── mustel/
 │   ├── cli.py         # CLI entrypoints (review, serve, bootstrap, map)
-│   ├── runner.py      # ThreadPool-parallel orchestrator with caching checks
-│   ├── cache.py       # Stat-based (mtime + size) high-speed cache
+│   ├── runner.py      # Parallel execution engine and thread orchestrator
+│   ├── cache.py       # Stat-based (mtime + size) file caching layer
 │   ├── code_map.py    # AST & regex repository map generator
-│   ├── normalizer.py  # Deduplicates findings, assigns IDs, generates prompts
+│   ├── normalizer.py  # Deduplication, formatting, and prompt serializer
 │   ├── schema.py      # TypedDict specifications and compact serializers
-│   ├── bootstrap.py   # Global IDE config injector & git hook installer
-│   └── patterns/      # YAML rules for 22 Python libraries & ipynb extraction
+│   ├── bootstrap.py   # IDE config injector and pre-commit hook installer
+│   └── patterns/      # YAML rules and notebook loader
 ```
 
 ---
 
-## 📄 License
+## License
 
 MIT License - Copyright (c) 2026 Ameya K, Raunak N. See [LICENSE](LICENSE) for details.
