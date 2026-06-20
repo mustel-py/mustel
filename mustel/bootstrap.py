@@ -74,9 +74,6 @@ def inject_into_json_file(file_path: str, mcp_key: str = "mcpServers") -> bool:
         except Exception:
             return False
 
-    if not isinstance(data, dict):
-        data = {}
-
     # Ensure mcp_key exists and is a dictionary
     if mcp_key not in data or not isinstance(data[mcp_key], dict):
         data[mcp_key] = {}
