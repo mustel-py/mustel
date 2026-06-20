@@ -13,7 +13,7 @@
 
 Mustel is a static analysis orchestrator designed for AI-assisted development environments (such as Cursor, Windsurf, or Claude Code). It coordinates Ruff, Bandit, Oxlint, Pip-Audit, and custom YAML patterns in parallel, operating in two modes:
 
-*   **Dev Mode (Default)**: Executes only local, non-networked checks (Ruff, Oxlint, and custom rule patterns) during editor save loops. Version 0.3.0 introduces a stat-based (`mtime` + `size`) cache, reducing incremental scan latency from **300ms (in v0.2.0) to under 30ms (in v0.3.0)**—providing a **10x speed improvement** that allows real-time feedback.
+*   **Dev Mode (Default)**: Executes only local, non-networked checks (Ruff, Oxlint, and custom rule patterns) during editor save loops. Version 0.3.0 introduces a stat-based (`mtime` + `size`) cache, reducing incremental scan latency from **300ms (in v0.2.0) to under 30ms (in v0.3.0)**, providing a **10x speed improvement** that allows real-time feedback.
 *   **Audit Mode**: Triggered inside pre-commit hooks or CI/CD pipelines (when `CI`, `GITHUB_ACTIONS`, or `PRE_COMMIT` variables are present). Enables deep security scans (Bandit) and package audits (pip-audit) to prevent vulnerabilities from being committed.
 
 ### The Problem
