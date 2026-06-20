@@ -107,28 +107,40 @@ _BANDIT_TEST_CWE: Dict[str, str] = {
 }
 
 
-def _is_bandit_available() -> bool:
+_BANDIT_CMD: Optional[List[str]] = None
+
+
+def _get_bandit_cmd() -> Optional[List[str]]:
+    """Get the command to execute Bandit (binary on PATH preferred, fallback to module)."""
+    global _BANDIT_CMD
+    if _BANDIT_CMD is not None:
+        return _BANDIT_CMD
+
+    # Check PATH first
+    try:
+        result = subprocess.run(
+            ["bandit", "--version"],
+            capture_output=True, text=True, timeout=5
+        )
+        if result.returncode == 0:
+            _BANDIT_CMD = ["bandit"]
+            return _BANDIT_CMD
+    except Exception:
+        pass
+
+    # Check python module fallback
     try:
         result = subprocess.run(
             [sys.executable, "-m", "bandit", "--version"],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=5
         )
-        return result.returncode == 0
+        if result.returncode == 0:
+            _BANDIT_CMD = [sys.executable, "-m", "bandit"]
+            return _BANDIT_CMD
     except Exception:
-        return False
+        pass
 
-
-def _ensure_bandit() -> bool:
-    if _is_bandit_available():
-        return True
-    try:
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", "bandit>=1.7.0", "-q"],
-            capture_output=True, timeout=60
-        )
-        return _is_bandit_available()
-    except Exception:
-        return False
+    return None
 
 
 def _normalize_issue(raw: Dict[str, Any], project_root: str) -> Optional[Dict[str, Any]]:
@@ -198,29 +210,27 @@ def _normalize_issue(raw: Dict[str, Any], project_root: str) -> Optional[Dict[st
         return None
 
 
-def run(path: str, project_root: Optional[str] = None) -> List[Dict[str, Any]]:
+def run(path: str | List[str], project_root: Optional[str] = None) -> List[Dict[str, Any]]:
     """
-    Run bandit on a path and return normalized mustel issues.
-
-    Args:
-        path: File or directory to scan.
-        project_root: Root for relative paths.
-
-    Returns:
-        List of normalized security issue dicts.
+    Run bandit on a path (file, directory, or list of files) and return normalized security issues.
     """
-    if project_root is None:
-        project_root = path if os.path.isdir(path) else os.path.dirname(path)
-
-    if not _ensure_bandit():
+    if not path:
         return []
+
+    if project_root is None:
+        first_path = path[0] if isinstance(path, list) else path
+        project_root = first_path if os.path.isdir(first_path) else os.path.dirname(first_path)
+
+    cmd = _get_bandit_cmd()
+    if not cmd:
+        return []
+
+    paths_to_check = path if isinstance(path, list) else [path]
+    is_dir_scan = any(os.path.isdir(p) for p in paths_to_check)
 
     try:
         result = subprocess.run(
-            [
-                sys.executable, "-m", "bandit",
-                "-r" if os.path.isdir(path) else "",
-                path,
+            cmd + (["-r"] if is_dir_scan else []) + paths_to_check + [
                 "-f", "json",
                 "-ll",         # low severity threshold (include all, filter later)
                 "--quiet",

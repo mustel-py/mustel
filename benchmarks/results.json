@@ -747,5 +747,56 @@
     "agent_prompt": "mustel found 15 issues: HighSec:S001,S003,S004,S005,S006,S007,S008 | Errs:E001,E002,E003 | MedSec:S002 | Warns:W001,W002,W003,W004. Use IDs to lookup details in JSON.",
     "agent_prompt_length": 166,
     "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-06-20T12:56:33.066654+00:00",
+    "project": "project_auth",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_secret",
+      "sql_injection",
+      "md5_hashing",
+      "no_timeout",
+      "shell_injection"
+    ],
+    "missed": [],
+    "false_positive_count": 2,
+    "false_positives": [
+      {
+        "id": "S002",
+        "file": "app.py",
+        "line": 18,
+        "message": "Ensure Flask forms are protected against CSRF attacks. Use Flask-WTF or implement CSRF tokens manual"
+      },
+      {
+        "id": "S008",
+        "file": "app.py",
+        "line": 81,
+        "message": "Flask running with debug=True in production exposes an interactive debugger and code execution via t"
+      }
+    ],
+    "scan_time_ms": 907,
+    "agent_prompt": "mustel: Fix these first: [S001] app.py:11 - shell=True passes the command through the shell \u2014 command injection risk if any part of the command includes user input. Use a list of arguments instead: subprocess.run(['cmd', 'arg'], shell=False). | [S003] app.py:21 - Flask SECRET_KEY is hardcoded in source code. Anyone with access to the code can forge session cookies. Generate a strong random key and store it in an environment variable: SECRET_KEY = os.environ['SECRET_KEY']. | [S004] app.py:38 - Possible SQL injection vector through string-based query construction | [S006] app.py:75 - shell=True passes the command through the shell \u2014 command injection risk if any part of the command includes user input. Use a list of arguments instead: subprocess.run(['cmd', 'arg'], shell=False). | [S007] app.py:76 - shell=True passes the command through the shell \u2014 command injection risk if any part of the command includes user input. Use a list of arguments instead: subprocess.run(['cmd', 'arg'], shell=False). | [S008] app.py:81 - Flask running with debug=True in production exposes an interactive debugger and code execution via the browser. Never deploy with debug=True. Set it via environment: app.run(debug=os.environ.get('FLASK_DEBUG', False)). | [E001] app.py:27 - Module level import not at top of file | [E002] app.py:55 - Line too long (90 > 88) | [E003] app.py:67 - requests call without a timeout will hang indefinitely if the server is unresponsive. Add timeout=30 (or an appropriate value) to every HTTP call. | Other: 2 med-sec (S002,S005), 4 style warnings",
+    "agent_prompt_length": 1569,
+    "all_targets_met": false
+  },
+  {
+    "timestamp": "2026-06-20T13:03:40.045604+00:00",
+    "project": "project_backend",
+    "recall_score": 1.0,
+    "recall_detail": [
+      "hardcoded_aws",
+      "jwt_verify_false",
+      "path_traversal",
+      "ssrf_requests",
+      "insecure_deserialization"
+    ],
+    "missed": [],
+    "false_positive_count": 0,
+    "false_positives": [],
+    "scan_time_ms": 291,
+    "agent_prompt": "mustel: Fix these first: [S001] app.py:25 - Hardcoded AWS credentials found. Use IAM roles, ~/.aws/credentials, or environment variables instead of hardcoding keys in source code. | [S002] app.py:26 - Hardcoded AWS credentials found. Use IAM roles, ~/.aws/credentials, or environment variables instead of hardcoding keys in source code. | [S003] app.py:42 - JWT decoded with signature verification disabled. This means any token \u2014 including forged ones \u2014 will be accepted. Never disable JWT verification in production. | [S004] app.py:44 - `try`-`except`-`pass` detected, consider logging the exception | [S006] app.py:68 - requests call with a variable URL. If this variable is controlled by user input, it may lead to Server-Side Request Forgery (SSRF). Ensure the URL is strictly validated or fetched from an allowlist. | [S007] app.py:79 - pickle.load/loads() deserializes arbitrary Python objects. Never unpickle data received from an untrusted or unauthenticated source \u2014 it can execute arbitrary code. Use JSON or another safe serialization format instead. | [E001] app.py:18 - `fastapi.Header` imported but unused | [E002] app.py:52 - Line too long (90 > 88) | [E003] app.py:56 - Async functions should not use os.path methods, use trio.Path or anyio.path | [E004] app.py:59 - Async functions should not open files with blocking methods like `open` | [E005] app.py:74 - Raw Request object used in endpoint. Consider using FastAPI's typed query parameters and Pydantic models for automatic validation instead of accessing request data directly. | [E006] app.py:82 - Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling | Other: 1 med-sec (S005), 7 style warnings",
+    "agent_prompt_length": 1765,
+    "all_targets_met": false
   }
 ]

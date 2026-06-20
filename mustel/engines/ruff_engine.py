@@ -77,30 +77,40 @@ def _get_prefix(rule_code: str) -> str:
     return rule_code
 
 
-def _is_ruff_available() -> bool:
-    """Check if ruff is installed and callable."""
+_RUFF_CMD: Optional[List[str]] = None
+
+
+def _get_ruff_cmd() -> Optional[List[str]]:
+    """Get the command to execute Ruff (binary on PATH preferred, fallback to module)."""
+    global _RUFF_CMD
+    if _RUFF_CMD is not None:
+        return _RUFF_CMD
+
+    # Check PATH first (binary is much faster than sys.executable startup)
+    try:
+        result = subprocess.run(
+            ["ruff", "--version"],
+            capture_output=True, text=True, timeout=5
+        )
+        if result.returncode == 0:
+            _RUFF_CMD = ["ruff"]
+            return _RUFF_CMD
+    except Exception:
+        pass
+
+    # Check python module fallback
     try:
         result = subprocess.run(
             [sys.executable, "-m", "ruff", "--version"],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=5
         )
-        return result.returncode == 0
+        if result.returncode == 0:
+            _RUFF_CMD = [sys.executable, "-m", "ruff"]
+            return _RUFF_CMD
     except Exception:
-        return False
+        pass
 
-
-def _ensure_ruff() -> bool:
-    """Install ruff if not present. Returns True if available after check."""
-    if _is_ruff_available():
-        return True
-    try:
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", "ruff>=0.4.0", "-q"],
-            capture_output=True, timeout=60
-        )
-        return _is_ruff_available()
-    except Exception:
-        return False
+    return None
 
 
 def _normalize_issue(raw: Dict[str, Any], project_root: str) -> Optional[Dict[str, Any]]:
@@ -152,33 +162,31 @@ def _normalize_issue(raw: Dict[str, Any], project_root: str) -> Optional[Dict[st
         return None
 
 
-def run(path: str, project_root: Optional[str] = None) -> List[Dict[str, Any]]:
+def run(path: str | List[str], project_root: Optional[str] = None) -> List[Dict[str, Any]]:
     """
-    Run ruff on a path (file or directory) and return normalized mustel issues.
-
-    Args:
-        path: File or directory to scan.
-        project_root: Root directory for making paths relative (defaults to path
-                      if it's a dir, else dirname of path).
-
-    Returns:
-        List of normalized issue dicts (no IDs yet — assigned by normalizer).
-        Returns empty list if ruff is unavailable or finds no issues.
+    Run ruff on a path (file, directory, or list of files) and return normalized issues.
     """
-    if project_root is None:
-        project_root = path if os.path.isdir(path) else os.path.dirname(path)
-
-    if not _ensure_ruff():
+    if not path:
         return []
+
+    if project_root is None:
+        first_path = path[0] if isinstance(path, list) else path
+        project_root = first_path if os.path.isdir(first_path) else os.path.dirname(first_path)
+
+    cmd = _get_ruff_cmd()
+    if not cmd:
+        return []
+
+    paths_to_check = path if isinstance(path, list) else [path]
 
     try:
         result = subprocess.run(
-            [
-                sys.executable, "-m", "ruff", "check",
-                path,
+            cmd + [
+                "check",
+            ] + paths_to_check + [
                 "--output-format=json",
                 "--exit-zero",                  # don't fail on findings
-                "--select", "E,F,B,S,ANN,ASYNC,W",
+                "--select", "E,F,B,S,ANN,ASYNC,W,PD,NPY",
             ],
             capture_output=True,
             text=True,

@@ -149,22 +149,42 @@ def _get_imported_modules(source_lines: List[str]) -> set:
 #  Main scan function
 # ─────────────────────────────────────────────
 
+def _load_ipynb_source(file_path: str) -> List[str]:
+    """Extract raw source lines from code cells of a Jupyter Notebook (.ipynb)."""
+    import json
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+            data = json.load(f)
+        lines = []
+        for cell in data.get("cells", []):
+            if cell.get("cell_type") == "code":
+                cell_source = cell.get("source", [])
+                if isinstance(cell_source, list):
+                    for line in cell_source:
+                        lines.append(line.rstrip("\n"))
+                elif isinstance(cell_source, str):
+                    lines.extend(cell_source.splitlines())
+        return lines
+    except Exception:
+        return []
+
+
 def _scan_file(
     file_path: str,
     patterns: List[Dict[str, Any]],
     project_root: str,
 ) -> List[Dict[str, Any]]:
     """
-    Scan one Python file against all loaded patterns.
-
-    Only applies patterns for modules actually imported in the file,
-    which cuts down false positives significantly.
+    Scan one Python file or Jupyter Notebook against all loaded patterns.
     """
-    try:
-        with open(file_path, "r", encoding="utf-8", errors="replace") as f:
-            source_lines = f.read().splitlines()
-    except Exception:
-        return []
+    if file_path.endswith(".ipynb"):
+        source_lines = _load_ipynb_source(file_path)
+    else:
+        try:
+            with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                source_lines = f.read().splitlines()
+        except Exception:
+            return []
 
     imported_modules = _get_imported_modules(source_lines)
 
@@ -233,19 +253,23 @@ def _scan_file(
     return issues
 
 
-def run(path: str, project_root: Optional[str] = None) -> List[Dict[str, Any]]:
+def run(path: str | List[str], project_root: Optional[str] = None) -> List[Dict[str, Any]]:
     """
-    Run all loaded patterns against a file or directory.
+    Run all loaded patterns against a file, directory, or list of files.
 
     Args:
-        path: File or directory to scan.
+        path: File, directory, or list of files to scan.
         project_root: Root for relative paths.
 
     Returns:
         List of normalized issue dicts.
     """
+    if not path:
+        return []
+
     if project_root is None:
-        project_root = path if os.path.isdir(path) else os.path.dirname(path)
+        first_path = path[0] if isinstance(path, list) else path
+        project_root = first_path if os.path.isdir(first_path) else os.path.dirname(first_path)
 
     patterns = _load_all_pattern_files()
     if not patterns:
@@ -253,20 +277,25 @@ def run(path: str, project_root: Optional[str] = None) -> List[Dict[str, Any]]:
 
     py_files: List[str] = []
 
-    if os.path.isfile(path):
-        if path.endswith(".py"):
-            py_files = [path]
-    elif os.path.isdir(path):
-        for root, dirs, files in os.walk(path):
-            # Skip common non-project directories
-            dirs[:] = [
-                d for d in dirs
-                if d not in {".venv", "venv", "env", ".env", "__pycache__",
-                              ".git", ".tox", "node_modules", "dist", "build"}
-            ]
-            for fname in files:
-                if fname.endswith(".py"):
-                    py_files.append(os.path.join(root, fname))
+    if isinstance(path, list):
+        for p in path:
+            if p.endswith(".py") or p.endswith(".ipynb"):
+                py_files.append(p)
+    else:
+        if os.path.isfile(path):
+            if path.endswith(".py") or path.endswith(".ipynb"):
+                py_files = [path]
+        elif os.path.isdir(path):
+            for root, dirs, files in os.walk(path):
+                # Skip common non-project directories
+                dirs[:] = [
+                    d for d in dirs
+                    if d not in {".venv", "venv", "env", ".env", "__pycache__",
+                                  ".git", ".tox", "node_modules", "dist", "build"}
+                ]
+                for fname in files:
+                    if fname.endswith(".py") or fname.endswith(".ipynb"):
+                        py_files.append(os.path.join(root, fname))
 
     issues = []
     for py_file in py_files:

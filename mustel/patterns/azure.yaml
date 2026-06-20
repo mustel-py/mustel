@@ -1,0 +1,19 @@
+module: azure
+patterns:
+  - id: "azure-hardcoded-conn-str"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-798"
+    detect:
+      type: "pattern"
+      match: "from_connection_string\\([^)]*['\"]"
+    message: "Avoid hardcoding Azure Connection Strings in code. Use Managed Identity (DefaultAzureCredential) or environment variables instead."
+
+  - id: "azure-blob-anonymous-access"
+    severity: "warning"
+    category: "security"
+    cwe: "CWE-732"
+    detect:
+      type: "keyword"
+      match: "public_access="
+    message: "Setting public access access levels on Azure Blob Containers. Ensure container data is safe to expose publicly."

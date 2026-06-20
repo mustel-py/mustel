@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mustel": {
+      "command": "mustel",
+      "args": [
+        "serve"
+      ],
+      "description": "Mustel \u2014 Agent-Native Linter & Guardrail"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+module: google
+patterns:
+  - id: "google-cloud-hardcoded-key"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-798"
+    detect:
+      type: "pattern"
+      match: "from_service_account_(?:json|info)\\([^)]*['\"]"
+    message: "Avoid hardcoding service account JSON keys/credentials paths in code. Use Application Default Credentials (ADC) or environment variables instead."
+
+  - id: "google-cloud-storage-acl"
+    severity: "warning"
+    category: "security"
+    cwe: "CWE-732"
+    detect:
+      type: "pattern"
+      match: "bucket\\.acl\\.all\\(\\)\\.grant_"
+    message: "Granting public access programmatically on Google Cloud Storage buckets. Ensure this is intentional and doesn't expose sensitive files."
