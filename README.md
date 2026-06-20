@@ -11,15 +11,20 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
 
-Mustel is a lightweight, high-speed static analysis layer that sits between your code and AI coding agents (such as Cursor, Windsurf, or Claude Code). 
+Mustel is an agent-native, all-rounder static analysis engine that sits between your codebase and AI coding agents (such as Cursor, Windsurf, or Claude Code) to enforce local compile guardrails and optimize token consumption.
+
+It coordinates multiple lint and security engines in parallel (Ruff, Bandit, Oxlint, Pip-Audit, and custom YAML patterns) and operates in two zero-config modes:
+
+*   **Dev Mode (Sub-30ms)**: Automatically active on editor save events. It runs lightweight local checks (Ruff, Oxlint, and custom rules) against a stat-based file cache (`mtime` + `size`), bypassing network calls to provide instant syntax validation.
+*   **Audit Mode (Deep Security)**: Automatically active in pre-commit hooks or CI/CD pipelines (detecting `CI`, `GITHUB_ACTIONS`, or `PRE_COMMIT`). It triggers deep security scanning (Bandit) and package vulnerability audits (pip-audit) to prevent vulnerabilities from being committed.
 
 ### The Problem
-When AI agents review or edit a project, they consume thousands of context tokens reading full source files simply to understand how they connect. If the agent introduces syntax errors, it often requires multiple round-trips of copy-pasting terminal tracebacks to fix them.
+When AI agents review or edit code, they consume thousands of tokens reading raw source files simply to understand code relationships. Furthermore, if they introduce syntax or import errors, developers must spend multiple manual turns copying and pasting tracebacks to guide the agent to a fix.
 
 ### The Solution
-Mustel runs locally in under 30ms during save loops and git hooks to:
-* **Map Codebases**: Exposes a compressed, 1,500-token skeleton (`get_code_map`) of classes, functions, and docstrings so the agent learns your repository structure instantly without opening raw files.
-* **Enforce Save Guardrails**: Catches compile and syntax errors on file save, injecting an immediate `=== MUSTEL GUARDRAIL ALERT ===` directly into the agent's tool output to force self-correction before user review.
+Mustel runs locally and transparently to:
+*   **Map Codebases**: Exposes a compressed, 1,500-token codebase map (`get_code_map`) of classes, functions, and docstrings so the agent learns your repository structure instantly without opening raw files.
+*   **Enforce Save Guardrails**: Intercepts compiler, syntax, and import errors on save, injecting a high-priority `=== MUSTEL GUARDRAIL ALERT ===` block directly into the agent's tool output to force self-correction before user review.
 
 ```text
 Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant Fixes
@@ -92,7 +97,7 @@ mustel map
 
 ---
 
-## 🛠️ MCP Server Specification
+## 🛠️ MCP Server Tools
 
 Mustel runs an MCP server over stdio transport via `mustel serve`. The exposed tools are documented below:
 
