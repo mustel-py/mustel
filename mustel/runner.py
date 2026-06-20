@@ -146,31 +146,42 @@ def run_review(
                 futures["pipaudit"] = executor.submit(pipaudit_engine.run)
 
             # Gather results from threads
+            failed_engines = set()
             if "ruff" in futures:
                 try:
                     ruff_results = futures["ruff"].result() or []
-                except Exception:
-                    pass
+                except Exception as e:
+                    import sys
+                    print(f"Error running ruff engine: {e}", file=sys.stderr)
+                    failed_engines.add("ruff")
             if "patterns" in futures:
                 try:
                     pattern_results = futures["patterns"].result() or []
-                except Exception:
-                    pass
+                except Exception as e:
+                    import sys
+                    print(f"Error running patterns engine: {e}", file=sys.stderr)
+                    failed_engines.add("patterns")
             if "bandit" in futures:
                 try:
                     bandit_results = futures["bandit"].result() or []
-                except Exception:
-                    pass
+                except Exception as e:
+                    import sys
+                    print(f"Error running bandit engine: {e}", file=sys.stderr)
+                    failed_engines.add("bandit")
             if "oxlint" in futures:
                 try:
                     oxlint_results = futures["oxlint"].result() or []
-                except Exception:
-                    pass
+                except Exception as e:
+                    import sys
+                    print(f"Error running oxlint engine: {e}", file=sys.stderr)
+                    failed_engines.add("oxlint")
             if "pipaudit" in futures:
                 try:
                     pipaudit_results = futures["pipaudit"].result() or []
-                except Exception:
-                    pass
+                except Exception as e:
+                    import sys
+                    print(f"Error running pipaudit engine: {e}", file=sys.stderr)
+                    failed_engines.add("pipaudit")
 
         # Update cache for the scanned files
         # Group new findings by relative file path to cache them correctly
@@ -188,10 +199,16 @@ def run_review(
             if f_path in new_findings_by_file:
                 new_findings_by_file[f_path].append(finding)
 
-        # Write updates to cache object
+        # Write updates to cache object (only if those engines didn't fail)
+        python_cache_safe = not {"ruff", "patterns", "bandit"}.intersection(failed_engines)
+        js_cache_safe = "oxlint" not in failed_engines
+
         for rel_p, findings in new_findings_by_file.items():
             abs_p = os.path.abspath(os.path.join(project_root, rel_p))
-            cache.update_cached_findings(abs_p, findings)
+            is_py = abs_p.endswith((".py", ".ipynb"))
+            is_js = abs_p.endswith((".js", ".jsx", ".ts", ".tsx"))
+            if (is_py and python_cache_safe) or (is_js and js_cache_safe):
+                cache.update_cached_findings(abs_p, findings)
 
         cache.save()
 

@@ -111,7 +111,7 @@ def _parse_js_ts_file(file_path: str) -> dict:
         if func_match:
             func_name = func_match.group(1)
             args = [a.strip() for a in func_match.group(2).split(",") if a.strip()]
-            if current_class and "{" in line_stripped and "function" not in line_stripped:
+            if current_class and "{" in line_stripped:
                 current_class["methods"].append({"name": func_name, "args": args, "docstring": ""})
             else:
                 functions.append({"name": func_name, "args": args, "docstring": ""})

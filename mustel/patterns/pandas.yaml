@@ -30,5 +30,5 @@ patterns:
     cwe: "CWE-89"
     detect:
       type: "pattern"
-      match: "read_sql\\([^)]*(?:f[\'\"]|%|\\.format)"
+      match: "read_sql\\([^)]*(?:f['\"]|%|\\.format)"
     message: "SQL query built with string formatting inside read_sql. Use parameterized query parameters (params=...) instead to prevent SQL injection."

@@ -16,4 +16,4 @@ patterns:
     detect:
       type: "keyword"
       match: "public_access="
-    message: "Setting public access access levels on Azure Blob Containers. Ensure container data is safe to expose publicly."
+    message: "Setting public access levels on Azure Blob Containers. Ensure container data is safe to expose publicly."

@@ -407,7 +407,7 @@ We measured:
 | **mcp** | 109 | 73,614 | 15,921 | 2,794 ms | 649 ms | **79 ms** |
 
 ### 10.2 Scale Summary & Latency Analysis
-*   **Incremental Latency**: Caching keeps the compile/lint feedback loop exceptionally tight, running in **under 32 ms** for standard projects (15-25 files) and only **79-114 ms** on very large repos (69-109 files). This satisfies the strict `< 50ms` target for typical editor saves.
+*   **Incremental Latency**: Caching keeps the compile/lint feedback loop exceptionally tight, running in **under 32 ms** for standard projects (15-25 files) and only **79-114 ms** on industrial-scale repos (60-110 files). This satisfies the strict `< 50ms` target for typical editor saves.
 *   **Repository Mapping Overhead**: On average, a project codebase map occupies **~4,000 - 8,000 tokens**. Although larger than the 300-token target for tiny files, it represents a **95% token savings** compared to sending the raw source contents of all modules (e.g., requests is 18 files, ~100k tokens of source code vs only 4,587 tokens of mapping skeleton).
 
 ---

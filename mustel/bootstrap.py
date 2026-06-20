@@ -69,8 +69,10 @@ def inject_into_json_file(file_path: str, mcp_key: str = "mcpServers") -> bool:
                 f.write(content)
                 
             data = json.loads(content)
+            if not isinstance(data, dict):
+                return False
         except Exception:
-            data = {}
+            return False
 
     if not isinstance(data, dict):
         data = {}
@@ -186,8 +188,15 @@ def bootstrap_project(project_path: str) -> Dict[str, bool]:
                 if "mustel review" in existing:
                     write_hook = False
                 else:
-                    # Append it
-                    hook_content = existing + "\n\n# mustel hook\nmustel review\n"
+                    # Prepend it after shebang if present, otherwise prepend
+                    mustel_hook_text = "# mustel hook\nmustel review || exit 1\n"
+                    lines = existing.splitlines(keepends=True)
+                    if lines and lines[0].startswith("#!"):
+                        shebang = lines[0]
+                        rest = "".join(lines[1:])
+                        hook_content = shebang + "\n" + mustel_hook_text + "\n" + rest
+                    else:
+                        hook_content = mustel_hook_text + "\n" + existing
             
             if write_hook:
                 with open(hook_path, "w", encoding="utf-8", newline="\n") as f:

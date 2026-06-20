@@ -6,7 +6,7 @@ mustel is a high-speed, zero-config static analysis and context layer built spec
 
 By integrating locally into your file save loops and git hooks, mustel gives AI agents deterministic ground truth and API structures in token-optimized formats.
 
-```
+```text
 Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant Fixes
 ```
 
@@ -96,7 +96,7 @@ Tested on real open-source targets (`requests`, `click`, `watchdog`, `bandit`, `
 
 ## 📂 Codebase Layout
 
-```
+```text
 mustel/
 ├── mustel/
 │   ├── cli.py         # CLI entrypoints (review, serve, bootstrap, map)

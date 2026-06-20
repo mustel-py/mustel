@@ -228,7 +228,7 @@ def start_mcp_server():
                 description="The latest Mustel static analysis report for the project (Dev Mode, compact format).",
                 mimeType="application/json",
             )
-		]
+        ]
 
     @server.read_resource()
     async def read_resource(uri: str) -> str:

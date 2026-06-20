@@ -218,7 +218,7 @@ def _scan_file(
             if match_str:
                 hit_lines = _detect_keyword(source_lines, match_str)
 
-        elif detect_type == "pattern":
+        elif detect_type in ("pattern", "regex"):
             match_str = detect.get("match", "")
             if match_str:
                 hit_lines = _detect_pattern(source_lines, match_str)

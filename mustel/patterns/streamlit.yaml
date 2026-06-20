@@ -5,8 +5,8 @@ patterns:
     category: "security"
     cwe: "CWE-79"
     detect:
-      type: "keyword"
-      match: "unsafe_allow_html=True"
+      type: "regex"
+      match: "unsafe_allow_html\\s*=\\s*True"
     message: "unsafe_allow_html=True exposes the app to Cross-Site Scripting (XSS) attacks. Ensure that any input rendered is thoroughly sanitized."
 
   - id: "streamlit-caching"

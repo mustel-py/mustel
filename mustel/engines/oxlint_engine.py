@@ -12,39 +12,41 @@ import shutil
 import subprocess
 from typing import List, Dict, Any, Optional
 
-_OXLINT_CMD: Optional[List[str]] = None
+_OXLINT_CMD_CACHE: Dict[tuple[str, bool], Optional[List[str]]] = {}
 
 
-def _get_oxlint_cmd(audit_mode: bool = False) -> Optional[List[str]]:
-    global _OXLINT_CMD
-    if _OXLINT_CMD is not None:
-        return _OXLINT_CMD
+def _get_oxlint_cmd(project_root: str, audit_mode: bool = False) -> Optional[List[str]]:
+    global _OXLINT_CMD_CACHE
+    key = (project_root, audit_mode)
+    if key in _OXLINT_CMD_CACHE:
+        return _OXLINT_CMD_CACHE[key]
 
     # Check local node_modules first
-    local_bin = os.path.abspath(os.path.join("node_modules", ".bin", "oxlint"))
+    local_bin = os.path.abspath(os.path.join(project_root, "node_modules", ".bin", "oxlint"))
     if os.path.exists(local_bin):
-        _OXLINT_CMD = [local_bin]
-        return _OXLINT_CMD
+        _OXLINT_CMD_CACHE[key] = [local_bin]
+        return _OXLINT_CMD_CACHE[key]
 
     # Check Windows cmd fallback
     local_bin_win = local_bin + ".cmd"
     if os.path.exists(local_bin_win):
-        _OXLINT_CMD = [local_bin_win]
-        return _OXLINT_CMD
+        _OXLINT_CMD_CACHE[key] = [local_bin_win]
+        return _OXLINT_CMD_CACHE[key]
 
     # Check PATH
     if shutil.which("oxlint"):
-        _OXLINT_CMD = ["oxlint"]
-        return _OXLINT_CMD
+        _OXLINT_CMD_CACHE[key] = ["oxlint"]
+        return _OXLINT_CMD_CACHE[key]
 
     # Audit mode allows npx fallback (might check network)
     if audit_mode and shutil.which("npx"):
         # npx on Windows needs shell or .cmd suffix
         npx_cmd = "npx.cmd" if sys.platform == "win32" else "npx"
         if shutil.which(npx_cmd):
-            _OXLINT_CMD = [npx_cmd, "-y", "oxlint"]
-            return _OXLINT_CMD
+            _OXLINT_CMD_CACHE[key] = [npx_cmd, "-y", "oxlint"]
+            return _OXLINT_CMD_CACHE[key]
 
+    _OXLINT_CMD_CACHE[key] = None
     return None
 
 
@@ -53,7 +55,7 @@ def run(files: List[str], project_root: str, audit_mode: bool = False) -> List[D
     if not files:
         return []
 
-    cmd = _get_oxlint_cmd(audit_mode)
+    cmd = _get_oxlint_cmd(project_root, audit_mode)
     if not cmd:
         return []
 

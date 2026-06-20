@@ -64,7 +64,9 @@ class MustelCache:
 
         entry = self.data.get(rel_path)
         if entry and entry.get("mtime") == mtime and entry.get("size") == size:
-            return entry.get("findings")
+            findings = entry.get("findings")
+            if isinstance(findings, list) and all(isinstance(f, dict) for f in findings):
+                return findings
         return None
 
     def update_cached_findings(self, file_path: str, findings: List[Dict[str, Any]]):

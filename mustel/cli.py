@@ -78,7 +78,7 @@ def review(path: str, single_file: str, no_packages: bool, force_audit: bool | N
     )
 
     indent = 2 if pretty else None
-    click.echo(report.to_json(indent=indent if indent else 2))
+    click.echo(report.to_json(indent=indent))
 
 
 # ─────────────────────────────────────────────

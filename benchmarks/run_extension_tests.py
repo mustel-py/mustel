@@ -36,7 +36,7 @@ def test_code_map_correctness():
     # Calculate token count
     enc = tiktoken.get_encoding("cl100k_base")
     tokens = len(enc.encode(code_map_text))
-    print(f"  [PASS] Correctness verified.")
+    print("  [PASS] Correctness verified.")
     print(f"  [INFO] mustel codebase map size: {len(code_map_text)} chars, {tokens} tokens.")
     return tokens
 
@@ -77,7 +77,29 @@ def benchmark_packages():
     print("  MUSTEL 0.3.0 SCALE & LATENCY BENCHMARKS (5 Open-Source Projects)")
     print("="*70)
     
-    site_packages = os.path.join(PROJECT_ROOT, ".venv", "Lib", "site-packages")
+    import site
+    site_packages = None
+    try:
+        for p in site.getsitepackages():
+            if "site-packages" in p and (sys.prefix in p or ".venv" in p):
+                site_packages = p
+                break
+    except Exception:
+        pass
+        
+    if not site_packages or not os.path.exists(site_packages):
+        for subpath in [
+            os.path.join("Lib", "site-packages"),
+            os.path.join("lib", f"python{sys.version_info.major}.{sys.version_info.minor}", "site-packages"),
+        ]:
+            p = os.path.join(sys.prefix, subpath)
+            if os.path.exists(p):
+                site_packages = p
+                break
+
+    if not site_packages:
+        site_packages = os.path.join(PROJECT_ROOT, ".venv", "Lib", "site-packages")
+
     packages = ["requests", "click", "mcp", "watchdog", "bandit"]
     
     enc_cl = tiktoken.get_encoding("cl100k_base")
@@ -136,7 +158,7 @@ def benchmark_packages():
             "code_map_tokens_cl100k": tokens_cl,
             "code_map_tokens_o200k": tokens_o2,
             "code_map_time_ms": map_time_ms,
-            "initial_scan_time_ms": init_init_time_ms if 'init_init_time_ms' in locals() else init_time_ms,
+            "initial_scan_time_ms": init_time_ms,
             "incremental_scan_time_ms": inc_time_ms,
         }
         
