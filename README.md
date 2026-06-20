@@ -6,13 +6,20 @@
 
 <p align="center">
   <a href="https://pypi.org/project/mustel/"><img src="https://img.shields.io/pypi/v/mustel.svg" alt="PyPI version"></a>
+  <a href="https://pepy.tech/projects/mustel"><img src="https://static.pepy.tech/personalized-badge/mustel?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=BLUE&left_text=downloads" alt="PyPI Downloads"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
 
-An agent-native static analysis and context layer for AI-assisted development environments (Cursor, Windsurf, Claude Code, Claude Desktop). 
+Mustel is a lightweight, high-speed static analysis layer that sits between your code and AI coding agents (such as Cursor, Windsurf, or Claude Code). 
 
-Mustel hooks into file save loops and git events, executing lint rules and generating compressed repository layout maps to minimize input token overhead and intercept compile errors before they reach the user.
+### The Problem
+When AI agents review or edit a project, they consume thousands of context tokens reading full source files simply to understand how they connect. If the agent introduces syntax errors, it often requires multiple round-trips of copy-pasting terminal tracebacks to fix them.
+
+### The Solution
+Mustel runs locally in under 30ms during save loops and git hooks to:
+* **Map Codebases**: Exposes a compressed, 1,500-token skeleton (`get_code_map`) of classes, functions, and docstrings so the agent learns your repository structure instantly without opening raw files.
+* **Enforce Save Guardrails**: Catches compile and syntax errors on file save, injecting an immediate `=== MUSTEL GUARDRAIL ALERT ===` directly into the agent's tool output to force self-correction before user review.
 
 ```text
 Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant Fixes
@@ -85,7 +92,7 @@ mustel map
 
 ---
 
-## 🛠️ MCP Server Tools
+## 🛠️ MCP Server Specification
 
 Mustel runs an MCP server over stdio transport via `mustel serve`. The exposed tools are documented below:
 
