@@ -1,10 +1,6 @@
 # mustel
 
 <p align="center">
-  <img src="logo.png" width="220" alt="Mustel Logo">
-</p>
-
-<p align="center">
   <a href="https://pypi.org/project/mustel/"><img src="https://img.shields.io/pypi/v/mustel.svg" alt="PyPI version"></a>
   <a href="https://pepy.tech/projects/mustel"><img src="https://static.pepy.tech/personalized-badge/mustel?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=BLUE&left_text=downloads" alt="PyPI Downloads"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
