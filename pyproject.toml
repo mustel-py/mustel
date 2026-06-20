@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mustel"
-version = "0.2.0"
-description = "Non-AI static analysis layer for AI IDEs and coding agents — bug detection, security scanning, and CVE checking via MCP"
+version = "0.3.0"
+description = "Non-AI static analysis layer for AI IDEs and coding agents - bug detection, security scanning, and CVE checking via MCP"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
