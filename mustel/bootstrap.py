@@ -14,8 +14,8 @@ from typing import Dict, Any, List
 
 # The MCP server entry to be injected
 MUSTEL_MCP_SERVER = {
-    "command": "mustel",
-    "args": ["serve"],
+    "command": sys.executable,
+    "args": ["-m", "mustel", "serve"],
     "description": "Mustel — Agent-Native Linter & Guardrail",
 }
 
