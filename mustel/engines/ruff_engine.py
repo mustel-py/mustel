@@ -41,6 +41,7 @@ _RULE_TO_SEVERITY: Dict[str, str] = {
     "I": "warning",     # isort
     "UP": "warning",    # pyupgrade
     "RUF": "warning",   # ruff-specific
+    "invalid-syntax": "error", # ruff syntax errors
 }
 
 _RULE_TO_CATEGORY: Dict[str, str] = {
@@ -56,6 +57,7 @@ _RULE_TO_CATEGORY: Dict[str, str] = {
     "I": "style",
     "UP": "style",
     "RUF": "bug",
+    "invalid-syntax": "bug",
 }
 
 

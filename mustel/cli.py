@@ -196,5 +196,26 @@ def bootstrap_cmd(ctx, global_install):
             click.echo(f"  - {task}: {status}")
 
 
+# ─────────────────────────────────────────────
+#  mustel map
+# ─────────────────────────────────────────────
+
+@main.command("map")
+@click.argument("path", default=".", required=False)
+def map_cmd(path: str):
+    """
+    Generate a compact, token-dense skeleton (class and method signatures)
+    of your project files.
+    """
+    import os
+    from mustel.code_map import format_code_map_text
+    project_root = os.path.abspath(path)
+    if not os.path.exists(project_root):
+        click.echo(f"Error: Path '{path}' does not exist.", err=True)
+        sys.exit(1)
+    
+    click.echo(format_code_map_text(project_root))
+
+
 if __name__ == "__main__":
     main()

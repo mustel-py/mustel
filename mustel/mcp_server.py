@@ -137,6 +137,22 @@ def start_mcp_server():
                     },
                 },
             ),
+            Tool(
+                name="get_code_map",
+                description=(
+                    "Generate a compact, token-dense skeleton (class names, function signatures) "
+                    "of your project files. Use at session start to understand codebase layout."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "Directory to scan. Defaults to current directory.",
+                        },
+                    },
+                },
+            ),
         ]
 
     # ─────────────────────────────────────────────
@@ -163,7 +179,14 @@ def start_mcp_server():
                     return [TextContent(type="text", text=json.dumps({"error": "file_path is required"}))]
                 # Always run in Dev Mode for review_file
                 report = run_review(single_file=file_path, skip_packages=True, audit=False)
-                return [TextContent(type="text", text=report.to_json(indent=2, compact=compact))]
+                output_text = report.to_json(indent=2, compact=compact)
+                if report.summary.total_errors > 0:
+                    output_text += (
+                        "\n\n=== MUSTEL GUARDRAIL ALERT ===\n"
+                        "Syntax/import errors detected! You must fix these errors immediately "
+                        "before showing changes to the user or running the code."
+                    )
+                return [TextContent(type="text", text=output_text)]
 
             elif name == "env":
                 from mustel.cli import get_env_snapshot
@@ -180,6 +203,11 @@ def start_mcp_server():
                     results = bootstrap_project(".")
                     msg = "Project bootstrapped: " + ", ".join([f"{k}: {'success' if v else 'failed'}" for k, v in results.items()])
                 return [TextContent(type="text", text=msg)]
+
+            elif name == "get_code_map":
+                from mustel.code_map import format_code_map_text
+                path = arguments.get("path", os.getcwd())
+                return [TextContent(type="text", text=format_code_map_text(path))]
 
             else:
                 return [TextContent(type="text", text=json.dumps({"error": f"Unknown tool: {name}"}))]
