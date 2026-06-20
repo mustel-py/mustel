@@ -1,0 +1,19 @@
+module: streamlit
+patterns:
+  - id: "streamlit-unsafe-html"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-79"
+    detect:
+      type: "regex"
+      match: "unsafe_allow_html\\s*=\\s*True"
+    message: "unsafe_allow_html=True exposes the app to Cross-Site Scripting (XSS) attacks. Ensure that any input rendered is thoroughly sanitized."
+
+  - id: "streamlit-caching"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "function_call_missing_arg"
+      functions: ["st.experimental_memo", "st.experimental_singleton"]
+      missing_arg: "ttl"
+    message: "Streamlit legacy caching decorator called without TTL. Cache might grow indefinitely. Consider migrating to @st.cache_data / @st.cache_resource."

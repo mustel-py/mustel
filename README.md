@@ -1,53 +1,49 @@
-# mustel
+# mustel (0.3.0)
 
-**Non-AI static analysis layer for AI IDEs and coding agents.**
+**The Agent-Native Linter & Guardrail for AI IDEs and Coding Agents.**
 
-mustel scans your Python code for bugs, security vulnerabilities, and package CVEs - then feeds the results to your AI IDE as structured JSON. No API keys. No internet required inside mustel. Pure deterministic analysis.
+mustel is a high-speed, zero-config static analysis and context layer built specifically to make AI coding agents (Cursor, Windsurf, Claude Code, Claude Desktop) cheaper, faster, and hallucination-free. 
 
-```
-Your Code -> mustel scans -> JSON report -> AI IDE reads -> AI IDE fixes
+By integrating locally into your file save loops and git hooks, mustel gives AI agents deterministic ground truth and API structures in token-optimized formats.
+
+```text
+Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant Fixes
 ```
 
 [![PyPI version](https://img.shields.io/pypi/v/mustel.svg)](https://pypi.org/project/mustel/)
-[![PyPI Downloads](https://static.pepy.tech/personalized-badge/mustel?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/mustel)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## Why mustel?
+## ⚡ Key Innovations in v0.3.0
 
-AI coding agents hallucinate bugs that don't exist and miss bugs that do. mustel solves this by giving the agent **ground truth** before it starts coding.
+### 1. Adaptive Execution Modes (Zero CLI Config)
+*   **Dev Mode (Default)**: Automatically triggered on editor file saves or MCP reviews. Runs only local checks (Ruff, Oxlint, custom patterns) and skips all network operations/npm registry calls. Latency is **< 30ms** via stat-based file caching (`mtime` + `size`).
+*   **Audit Mode**: Triggered automatically in Git hooks (`pre-commit`) or CI pipelines (detecting `CI` or `GITHUB_ACTIONS`). Runs deep security (Bandit) and package vulnerability scans (pip-audit).
 
-mustel unifies three analysis tools into one machine-readable JSON output:
+### 2. Repository Mapping (`get_code_map` / `mustel map`)
+A dedicated tool that serves a compact, token-dense skeleton (classes, method signatures, arguments, and docstrings) of your codebase. Instead of the AI reading raw source code files to understand your repository (which costs 10,000+ tokens), it reads the map once (**saving up to 95% input tokens**).
 
-| Engine | What it catches |
-|--------|----------------|
-| [ruff](https://github.com/astral-sh/ruff) | Syntax errors, unused imports, common bugs, type issues |
-| [bandit](https://github.com/PyCQA/bandit) | Security vulnerabilities (SQL injection, hardcoded passwords, etc.) |
-| [pip-audit](https://github.com/pypa/pip-audit) | Known CVEs in installed packages |
+### 3. Save Loop Guardrails
+On file saves, the editor triggers `review_file`. mustel instantly scans the code for syntax or import errors. If found, it appends a high-priority `=== MUSTEL GUARDRAIL ALERT ===` block in the tool output, directing the AI agent to resolve compile/syntax errors in 1 turn before notifying the user.
 
-Plus **20 module-specific YAML patterns** covering `subprocess`, `requests`, `flask`, `django`, `pickle`, `asyncio`, and more.
+### 4. Multi-Language & Jupyter Support
+*   **JS/TS Support**: Integrated `oxlint` engine for lightning-fast frontend checking.
+*   **Jupyter Notebooks (`.ipynb`)**: Extract and parse code cells JSON, running all custom Python patterns against data science notebooks.
+*   **Cloud & Data Science Rule Sets**: Added optimized patterns for `pandas`, `numpy`, `streamlit`, `google_cloud`, `azure`, and `boto3`.
 
-### The `agent_prompt` - The Key Innovation
-
-Every mustel report includes a pre-written `agent_prompt` field:
-
-```
-"agent_prompt": "mustel found 3 issues. Fix in this order:
-PRIORITY 1 - 1 HIGH security issue:
-  [S001] app/db.py:112 - SQL injection via string formatting
-PRIORITY 2 - 1 error:
-  [E001] app/auth.py:47 - undefined variable 'user'
-PRIORITY 3 - 1 warning:
-  [W001] app/utils.py:23 - unused import"
-```
-
-The AI agent reads this one field and knows exactly what to fix and in what order. No JSON parsing needed. No hallucination.
+### 5. Zero-Config Global IDE Bootstrapping
+When first run (or via `mustel bootstrap`), mustel automatically registers its MCP server globally across:
+*   **Cursor**: `%USERPROFILE%\.cursor\mcp.json`
+*   **Windsurf**: `~/.codeium/windsurf/mcp_config.json`
+*   **Claude Code**: `~/.claude.json`
+*   **Claude Desktop**: OS-specific AppData configs
+It also automatically injects guardrail rules into `.cursorrules` / `.windsurfrules` and installs git pre-commit hooks.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Install
 
@@ -55,144 +51,66 @@ The AI agent reads this one field and knows exactly what to fix and in what orde
 pip install mustel
 ```
 
-### Scan your project
+### Auto-Configure (Bootstrap)
 
 ```bash
-mustel review                    # scan current directory
-mustel review ./src              # scan a specific directory
-mustel review --file app.py      # scan one file
-mustel review --no-packages      # skip CVE check (faster)
-mustel review --watch            # auto-scan on save
+mustel bootstrap          # Setup current project local rules and git hooks
+mustel bootstrap --global # Register MCP server globally across Cursor, Windsurf, Claude
 ```
 
-### Output
-
-mustel outputs JSON conforming to **schema v1**:
-
-```json
-{
-  "mustel_version": "0.2.0",
-  "schema_version": 1,
-  "scanned_at": "2026-03-30T20:53:00Z",
-  "files_scanned": 14,
-  "scan_duration_ms": 340,
-  "results": {
-    "errors": [...],
-    "security": [...],
-    "warnings": [...],
-    "packages": [...]
-  },
-  "summary": {
-    "total_errors": 1,
-    "total_security": 1,
-    "total_warnings": 1,
-    "clean": false,
-    "highest_severity": "high"
-  },
-  "agent_prompt": "mustel found 3 issues. Fix in this order: ..."
-}
-```
-
----
-
-## MCP Server (For AI IDEs)
-
-mustel exposes an MCP server that AI IDEs can connect to automatically:
+### Scan Your Project
 
 ```bash
-mustel serve
-```
-
-Add to your AI IDE's MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "mustel": {
-      "command": "mustel",
-      "args": ["serve"],
-      "description": "Python bug and security detection"
-    }
-  }
-}
-```
-
-### MCP Tools
-
-| Tool | Input | Output |
-|------|-------|--------|
-| `review` | `path` (optional) | Full JSON scan report |
-| `review_file` | `file_path` | Single-file scan report |
-| `env` | - | Python version, venv status, pip info |
-| `check_package` | `package_name` | Availability, version, vulnerability status |
-
----
-
-## Other Commands
-
-```bash
-mustel env                # Python environment info (JSON)
-mustel check <package>    # Check if a package is installed (JSON)
-mustel install <package>  # Install a package safely
-mustel venv               # Virtual environment status (JSON)
-mustel venv new           # Create a .venv
+mustel review             # Runs Dev Mode (fast incremental lint)
+mustel review --audit     # Force deep security/CVE Audit Mode
+mustel review --file x.py # Scan a single file
+mustel map                # Print the codebase skeleton mapping (Text)
 ```
 
 ---
 
-## Benchmark Results
+## 🛠️ MCP Server Tools
 
-Tested against 4 projects with intentionally planted bugs:
+AI IDEs connect via stdio transport using `mustel serve`. The server exposes these tools:
 
-| Project | Planted Bugs | Caught | Recall |
-|---------|-------------|--------|--------|
-| Auth (SQL injection, MD5, hardcoded secrets) | 5 | 5 | 100% |
-| Async (bare except, blocking calls, race conditions) | 4 | 4 | 100% |
-| Scraper (shell injection, yaml.load, pickle) | 5 | 5 | 100% |
-| Clean (should find nothing) | 0 | 0 | 0% FP |
-| **Total** | **14** | **14** | **100%** |
-
----
-
-## Module Pattern Coverage (Tier 1)
-
-mustel includes YAML-based pattern files for these 20 modules:
-
-`subprocess` · `requests` · `sqlite3` · `os` · `pickle` · `json` · `hashlib` · `flask` · `django` · `fastapi` · `asyncio` · `logging` · `threading` · `tempfile` · `yaml` · `xml` · `socket` · `paramiko` · `cryptography` · `jwt`
-
-**Adding a new pattern requires zero Python knowledge** - just write a YAML file. See [CONTRIBUTING.md](CONTRIBUTING.md).
+| MCP Tool | Arguments | Output | Description |
+| :--- | :--- | :--- | :--- |
+| `review` | `path`, `skip_packages`, `compact`, `audit` | Compact JSON | Concurrently scans workspace files. |
+| `review_file` | `file_path`, `compact` | JSON + Alert | Local scan for active save loops (triggers guardrails). |
+| `get_code_map` | `path` | Tree Text | Compact AST/regex code mapping skeleton. |
+| `env` | - | JSON | Current Python environment snapshot. |
+| `bootstrap` | `global_install` | Text | Re-configures IDE settings and hooks. |
 
 ---
 
-## Architecture
+## 📊 Empirical Benchmarks
 
-```
-+--------------------------------------------------+
-|              AI IDE / Coding Agent                |
-|       (reads mustel JSON, fixes real issues)      |
-+------------------+-------------------------------+
-                   | calls
-+------------------v-------------------------------+
-|              mustel MCP Server                    |
-|          mustel serve (stdio transport)           |
-+------+--------------+--------------+-------------+
-       |              |              |
-+------v----+  +------v----+  +-----v------+
-|   ruff    |  |  bandit   |  |  pip-audit |
-|  (bugs)   |  |(security) |  |   (CVEs)   |
-+------+----+  +------+----+  +-----+------+
-       |              |              |
-+------v--------------v--------------v-----+
-|          mustel normalizer                |
-|   Dedup > Categorize > Assign IDs >      |
-|   Generate agent_prompt > Schema v1 JSON |
-+------------------------------------------+
+Tested on real open-source targets (`requests`, `click`, `watchdog`, `bandit`, `mcp`):
+
+*   **Recall**: **100%** on standard vulnerability checks.
+*   **Incremental Latency**: **26 - 32 ms** for typical projects; **79 - 114 ms** for repos with 100+ files.
+*   **Token Overhead**: Compressed `agent_prompt` summary fits under **191 characters** (under 50 tokens).
+*   **Token Reduction**: **34.4% net savings** in AI-agent review workflows (empirical tiktoken measurement).
+
+---
+
+## 📂 Codebase Layout
+
+```text
+mustel/
+├── mustel/
+│   ├── cli.py         # CLI entrypoints (review, serve, bootstrap, map)
+│   ├── runner.py      # ThreadPool-parallel orchestrator with caching checks
+│   ├── cache.py       # Stat-based (mtime + size) high-speed cache
+│   ├── code_map.py    # AST & regex repository map generator
+│   ├── normalizer.py  # Deduplicates findings, assigns IDs, generates prompts
+│   ├── schema.py      # TypedDict specifications and compact serializers
+│   ├── bootstrap.py   # Global IDE config injector & git hook installer
+│   └── patterns/      # YAML rules for 22 Python libraries & ipynb extraction
 ```
 
 ---
 
-## License
+## 📄 License
 
-MIT License - Copyright (c) 2026 Ameya K, Raunak N
-
-See [LICENSE](LICENSE) for full text.
+MIT License - Copyright (c) 2026 Ameya K, Raunak N. See [LICENSE](LICENSE) for details.

@@ -107,9 +107,41 @@ class MustelReport:
         d = asdict(self)
         return d
 
-    def to_json(self, indent: int = 2) -> str:
+    def to_compact_dict(self) -> dict:
+        """Return a token-optimized representation of the report."""
+        def _compact_issue(issue):
+            return {
+                "id": issue.id,
+                "file": issue.file,
+                "line": issue.line,
+                "msg": issue.message,
+            }
+        def _compact_vuln(vuln):
+            return {
+                "id": vuln.id,
+                "pkg": vuln.package,
+                "ver": vuln.installed_version,
+                "msg": vuln.message,
+            }
+        
+        return {
+            "summary": {
+                "errs": self.summary.total_errors,
+                "sec": self.summary.total_security,
+                "warns": self.summary.total_warnings,
+                "vulns": self.summary.total_package_vulnerabilities,
+            },
+            "errors": [_compact_issue(i) for i in self.results.errors],
+            "security": [_compact_issue(i) for i in self.results.security],
+            "warnings": [_compact_issue(i) for i in self.results.warnings],
+            "packages": [_compact_vuln(p) for p in self.results.packages],
+            "prompt": self.agent_prompt
+        }
+
+    def to_json(self, indent: int = 2, compact: bool = False) -> str:
         """Serialize to JSON string."""
-        return json.dumps(self.to_dict(), indent=indent)
+        data = self.to_compact_dict() if compact else self.to_dict()
+        return json.dumps(data, indent=indent)
 
     @property
     def is_clean(self) -> bool:

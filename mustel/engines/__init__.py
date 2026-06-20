@@ -9,4 +9,5 @@ Engines:
   ruff_engine    — bug detection (ruff)
   bandit_engine  — security detection (bandit)
   pipaudit_engine — package CVE detection (pip-audit)
+  oxlint_engine  — JS/TS bug detection (oxlint)
 """

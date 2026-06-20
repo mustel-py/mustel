@@ -1,0 +1,17 @@
+module: numpy
+patterns:
+  - id: "numpy-deprecated-type"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "np\\.(?:float|int|bool|complex|str|unicode)\\b"
+    message: "np.float/np.int/etc. are deprecated aliases. Use standard Python types (float, int, bool) or explicit NumPy types (np.float64, np.int64) instead."
+
+  - id: "numpy-random-legacy"
+    severity: "warning"
+    category: "style"
+    detect:
+      type: "pattern"
+      match: "np\\.random\\.(?:rand|randn|random_sample|choice|bytes|uniform|normal)\\("
+    message: "Legacy random generation functions are deprecated. Use the new Generator API: rng = np.random.default_rng(); rng.random() instead."

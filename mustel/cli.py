@@ -42,12 +42,12 @@ def main(ctx: click.Context):
 @main.command("review")
 @click.argument("path", default=".", required=False)
 @click.option("--file", "single_file", default=None, help="Scan a single file only.")
-@click.option("--watch", is_flag=True, default=False, help="Re-scan on file change.")
 @click.option("--no-packages", is_flag=True, default=False, help="Skip pip-audit (faster).")
+@click.option("--audit", "force_audit", is_flag=True, default=None, help="Force Audit Mode (runs Bandit and CVE check).")
 @click.option("--pretty", is_flag=True, default=False, help="Pretty-print JSON output.")
-def review(path: str, single_file: str, watch: bool, no_packages: bool, pretty: bool):
+def review(path: str, single_file: str, no_packages: bool, force_audit: bool | None, pretty: bool):
     """
-    Scan Python code for bugs and security issues.
+    Scan Python and JS/TS code for bugs and security issues.
 
     Outputs a JSON report conforming to mustel schema v1.
     The 'agent_prompt' field contains a pre-written summary for AI agents.
@@ -56,40 +56,72 @@ def review(path: str, single_file: str, watch: bool, no_packages: bool, pretty: 
       mustel review                   # scan current directory
       mustel review ./src             # scan a specific directory
       mustel review --file app.py     # scan one file
-      mustel review --watch           # auto-scan on save
       mustel review --no-packages     # skip CVE check (faster)
+      mustel review --audit           # force deep security/CVE check
     """
-    if watch:
-        _run_watch(path, no_packages=no_packages)
-        return
+    import os
+    # Passive bootstrap check: if .mustel cache folder is missing, run bootstrap silently
+    if not os.path.exists(".mustel"):
+        try:
+            from mustel.bootstrap import bootstrap_global, bootstrap_project
+            bootstrap_global()
+            bootstrap_project(".")
+        except Exception:
+            pass
 
     from mustel.runner import run_review
     report = run_review(
         path=path if not single_file else None,
         single_file=single_file,
         skip_packages=no_packages,
+        audit=force_audit,
     )
 
     indent = 2 if pretty else None
-    click.echo(report.to_json(indent=indent if indent else 2))
-
-
-def _run_watch(path: str, no_packages: bool = False):
-    """Run review in watch mode."""
-    try:
-        from mustel.watcher import start_watch
-        start_watch(path, no_packages=no_packages)
-    except ImportError:
-        click.echo(
-            json.dumps({"error": "watchdog not installed. Run: pip install watchdog"}),
-            err=True,
-        )
-        sys.exit(1)
+    click.echo(report.to_json(indent=indent))
 
 
 # ─────────────────────────────────────────────
 #  mustel env
 # ─────────────────────────────────────────────
+
+def get_env_snapshot() -> dict:
+    """Return a complete snapshot of the current Python environment."""
+    import platform
+    import subprocess
+    
+    in_venv = sys.prefix != sys.base_prefix
+    venv_status = {
+        "active": in_venv,
+        "path": sys.prefix if in_venv else None,
+        "base_python": sys.base_prefix,
+    }
+    
+    try:
+        out = subprocess.check_output(
+            [sys.executable, "-m", "pip", "--version"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+            timeout=5,
+        )
+        parts = out.strip().split()
+        pip_status = {
+            "version": parts[1] if len(parts) > 1 else "unknown",
+            "available": True,
+        }
+    except Exception:
+        pip_status = {"version": None, "available": False}
+
+    return {
+        "python_version": sys.version.split()[0],
+        "python_path": sys.executable,
+        "platform": platform.system(),
+        "platform_version": platform.version(),
+        "architecture": platform.architecture()[0],
+        "venv": venv_status,
+        "pip": pip_status,
+    }
+
 
 @main.command("env")
 @click.option("--pretty", is_flag=True, default=False, help="Pretty-print JSON output.")
@@ -99,7 +131,6 @@ def env_cmd(pretty: bool):
 
     Outputs: Python version, path, venv status, pip version.
     """
-    from mustel.env import get_env_snapshot
     snap = get_env_snapshot()
     click.echo(json.dumps(snap, indent=2 if pretty else None))
 
@@ -135,6 +166,55 @@ def serve_cmd():
             err=True,
         )
         sys.exit(1)
+
+
+# ─────────────────────────────────────────────
+#  mustel bootstrap
+# ─────────────────────────────────────────────
+
+@main.command("bootstrap")
+@click.option("--global", "global_install", is_flag=True, default=False, help="Install globally for all IDEs.")
+@click.pass_context
+def bootstrap_cmd(ctx, global_install):
+    """
+    Configure Mustel globally for IDEs and locally for the project.
+    """
+    from mustel.bootstrap import bootstrap_global, bootstrap_project
+
+    if global_install:
+        click.echo("Configuring Mustel globally...")
+        ide_success = bootstrap_global()
+        if ide_success:
+            click.echo(f"Successfully registered Mustel globally with: {', '.join(ide_success)}")
+        else:
+            click.echo("No active global IDE configurations found to update.")
+    else:
+        click.echo("Configuring Mustel for current project...")
+        results = bootstrap_project(".")
+        for task, success in results.items():
+            status = "Success" if success else "Failed/Skipped"
+            click.echo(f"  - {task}: {status}")
+
+
+# ─────────────────────────────────────────────
+#  mustel map
+# ─────────────────────────────────────────────
+
+@main.command("map")
+@click.argument("path", default=".", required=False)
+def map_cmd(path: str):
+    """
+    Generate a compact, token-dense skeleton (class and method signatures)
+    of your project files.
+    """
+    import os
+    from mustel.code_map import format_code_map_text
+    project_root = os.path.abspath(path)
+    if not os.path.exists(project_root):
+        click.echo(f"Error: Path '{path}' does not exist.", err=True)
+        sys.exit(1)
+    
+    click.echo(format_code_map_text(project_root))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,47 @@
+{
+  "requests": {
+    "files": 18,
+    "code_map_chars": 19318,
+    "code_map_tokens_cl100k": 4587,
+    "code_map_tokens_o200k": 4589,
+    "code_map_time_ms": 95,
+    "initial_scan_time_ms": 381,
+    "incremental_scan_time_ms": 54
+  },
+  "click": {
+    "files": 17,
+    "code_map_chars": 32425,
+    "code_map_tokens_cl100k": 7794,
+    "code_map_tokens_o200k": 7843,
+    "code_map_time_ms": 243,
+    "initial_scan_time_ms": 340,
+    "incremental_scan_time_ms": 25
+  },
+  "mcp": {
+    "files": 109,
+    "code_map_chars": 73614,
+    "code_map_tokens_cl100k": 15921,
+    "code_map_tokens_o200k": 15976,
+    "code_map_time_ms": 388,
+    "initial_scan_time_ms": 566,
+    "incremental_scan_time_ms": 116
+  },
+  "watchdog": {
+    "files": 25,
+    "code_map_chars": 21157,
+    "code_map_tokens_cl100k": 4908,
+    "code_map_tokens_o200k": 4915,
+    "code_map_time_ms": 128,
+    "initial_scan_time_ms": 357,
+    "incremental_scan_time_ms": 52
+  },
+  "bandit": {
+    "files": 69,
+    "code_map_chars": 18060,
+    "code_map_tokens_cl100k": 4352,
+    "code_map_tokens_o200k": 4387,
+    "code_map_time_ms": 156,
+    "initial_scan_time_ms": 505,
+    "incremental_scan_time_ms": 81
+  }
+}

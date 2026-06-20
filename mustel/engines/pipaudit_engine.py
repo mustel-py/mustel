@@ -37,52 +37,40 @@ def _cvss_to_severity(score: Optional[float]) -> str:
     return "low"
 
 
-def _is_pipaudit_available() -> bool:
-    try:
-        result = subprocess.run(
-            [sys.executable, "-m", "pip_audit", "--version"],
-            capture_output=True, text=True, timeout=10
-        )
-        return result.returncode == 0
-    except Exception:
-        # Try alternate invocation
-        try:
-            result = subprocess.run(
-                ["pip-audit", "--version"],
-                capture_output=True, text=True, timeout=10
-            )
-            return result.returncode == 0
-        except Exception:
-            return False
+_PIPAUDIT_CMD: Optional[List[str]] = None
 
 
-def _ensure_pipaudit() -> bool:
-    if _is_pipaudit_available():
-        return True
-    try:
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", "pip-audit>=2.6.0", "-q"],
-            capture_output=True, timeout=120
-        )
-        return _is_pipaudit_available()
-    except Exception:
-        return False
-
-
-def _get_pip_audit_command() -> Optional[List[str]]:
+def _get_pipaudit_cmd() -> Optional[List[str]]:
     """Return the correct pip-audit command for the current environment."""
-    # Try module invocation first
+    global _PIPAUDIT_CMD
+    if _PIPAUDIT_CMD is not None:
+        return _PIPAUDIT_CMD
+
+    # Try PATH first
     try:
         result = subprocess.run(
-            [sys.executable, "-m", "pip_audit", "--version"],
-            capture_output=True, text=True, timeout=10
+            ["pip-audit", "--version"],
+            capture_output=True, text=True, timeout=5
         )
         if result.returncode == 0:
-            return [sys.executable, "-m", "pip_audit"]
+            _PIPAUDIT_CMD = ["pip-audit"]
+            return _PIPAUDIT_CMD
     except Exception:
         pass
-    # Fall back to direct command
-    return ["pip-audit"]
+
+    # Try module invocation fallback
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip_audit", "--version"],
+            capture_output=True, text=True, timeout=5
+        )
+        if result.returncode == 0:
+            _PIPAUDIT_CMD = [sys.executable, "-m", "pip_audit"]
+            return _PIPAUDIT_CMD
+    except Exception:
+        pass
+
+    return None
 
 
 def _normalize_vulnerability(
@@ -154,10 +142,7 @@ def run() -> List[Dict[str, Any]]:
         List of normalized vulnerability dicts (no IDs — assigned by normalizer).
         Returns empty list if pip-audit is unavailable or finds nothing.
     """
-    if not _ensure_pipaudit():
-        return []
-
-    cmd = _get_pip_audit_command()
+    cmd = _get_pipaudit_cmd()
     if not cmd:
         return []
 

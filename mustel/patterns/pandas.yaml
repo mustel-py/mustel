@@ -1,0 +1,34 @@
+module: pandas
+patterns:
+  - id: "pandas-inplace"
+    severity: "warning"
+    category: "style"
+    detect:
+      type: "keyword"
+      match: "inplace=True"
+    message: "inplace=True is discouraged as it hinders method chaining and does not improve performance. Assign to a new variable or reassign instead: df = df.operation()."
+
+  - id: "pandas-iterrows"
+    severity: "warning"
+    category: "bug"
+    detect:
+      type: "pattern"
+      match: "\\.iterrows\\("
+    message: ".iterrows() is very slow. Use vectorized operations, np.where(), or .itertuples() instead for row iteration."
+
+  - id: "pandas-values"
+    severity: "warning"
+    category: "style"
+    detect:
+      type: "pattern"
+      match: "\\.values\\b"
+    message: ".values is ambiguous. Use .to_numpy() for a NumPy array or .array for a Pandas ExtensionArray."
+
+  - id: "pandas-sql-injection"
+    severity: "high"
+    category: "security"
+    cwe: "CWE-89"
+    detect:
+      type: "pattern"
+      match: "read_sql\\([^)]*(?:f['\"]|%|\\.format)"
+    message: "SQL query built with string formatting inside read_sql. Use parameterized query parameters (params=...) instead to prevent SQL injection."
