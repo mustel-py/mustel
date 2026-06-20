@@ -11,20 +11,18 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
 
-Mustel is an agent-native, all-rounder static analysis engine that sits between your codebase and AI coding agents (such as Cursor, Windsurf, or Claude Code) to enforce local compile guardrails and optimize token consumption.
+Mustel is a static analysis orchestrator designed for AI-assisted development environments (such as Cursor, Windsurf, or Claude Code). It coordinates Ruff, Bandit, Oxlint, Pip-Audit, and custom YAML patterns in parallel, operating in two modes:
 
-It coordinates multiple lint and security engines in parallel (Ruff, Bandit, Oxlint, Pip-Audit, and custom YAML patterns) and operates in two zero-config modes:
-
-*   **Dev Mode (Sub-30ms)**: Automatically active on editor save events. It runs lightweight local checks (Ruff, Oxlint, and custom rules) against a stat-based file cache (`mtime` + `size`), bypassing network calls to provide instant syntax validation.
-*   **Audit Mode (Deep Security)**: Automatically active in pre-commit hooks or CI/CD pipelines (detecting `CI`, `GITHUB_ACTIONS`, or `PRE_COMMIT`). It triggers deep security scanning (Bandit) and package vulnerability audits (pip-audit) to prevent vulnerabilities from being committed.
+*   **Dev Mode (Default)**: Executes only local, non-networked checks (Ruff, Oxlint, and custom rule patterns) during editor save loops. Version 0.3.0 introduces a stat-based (`mtime` + `size`) cache, reducing incremental scan latency from **300ms (in v0.2.0) to under 30ms (in v0.3.0)**—providing a **10x speed improvement** that allows real-time feedback.
+*   **Audit Mode**: Triggered inside pre-commit hooks or CI/CD pipelines (when `CI`, `GITHUB_ACTIONS`, or `PRE_COMMIT` variables are present). Enables deep security scans (Bandit) and package audits (pip-audit) to prevent vulnerabilities from being committed.
 
 ### The Problem
-When AI agents review or edit code, they consume thousands of tokens reading raw source files simply to understand code relationships. Furthermore, if they introduce syntax or import errors, developers must spend multiple manual turns copying and pasting tracebacks to guide the agent to a fix.
+When AI agents review or edit a codebase, they consume thousands of tokens reading full file contents simply to parse class and method relationships. Additionally, when they write code with syntax or import errors, developers must spend manual chat turns copying and pasting tracebacks to resolve them.
 
 ### The Solution
-Mustel runs locally and transparently to:
-*   **Map Codebases**: Exposes a compressed, 1,500-token codebase map (`get_code_map`) of classes, functions, and docstrings so the agent learns your repository structure instantly without opening raw files.
-*   **Enforce Save Guardrails**: Intercepts compiler, syntax, and import errors on save, injecting a high-priority `=== MUSTEL GUARDRAIL ALERT ===` block directly into the agent's tool output to force self-correction before user review.
+Mustel runs locally to provide:
+*   **Repository Mapping**: Exposes a compressed, 1,500-token skeleton (`get_code_map`) of classes, functions, and docstrings so the agent learns your codebase structure without opening raw files.
+*   **Save Guardrails**: Catches compile and syntax errors on file save, injecting an immediate `=== MUSTEL GUARDRAIL ALERT ===` block directly into the agent's tool output to enforce correction before user review.
 
 ```text
 Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant Fixes
