@@ -4,6 +4,12 @@
   <img src="logo.png" width="220" alt="Mustel Logo">
 </p>
 
+<p align="center">
+  <a href="https://pypi.org/project/mustel/"><img src="https://img.shields.io/pypi/v/mustel.svg" alt="PyPI version"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+</p>
+
 An agent-native static analysis and context layer for AI-assisted development environments (Cursor, Windsurf, Claude Code, Claude Desktop). 
 
 Mustel hooks into file save loops and git events, executing lint rules and generating compressed repository layout maps to minimize input token overhead and intercept compile errors before they reach the user.
@@ -14,7 +20,7 @@ Your Code -> mustel (Dev/Audit) -> Token-Saved JSON/Text -> AI Agent -> Instant 
 
 ---
 
-## Technical Architecture & Design
+## ⚡ Key Architecture & Design
 
 ### 1. Dual-Execution Modes (Zero Configuration)
 Mustel switches its execution profile dynamically based on environmental indicators:
@@ -43,7 +49,7 @@ It also automatically appends required instructions to project `.cursorrules` / 
 
 ---
 
-## Installation & Quick Start
+## 🚀 Quick Start
 
 ### Install
 
@@ -79,7 +85,7 @@ mustel map
 
 ---
 
-## MCP Server Specification
+## 🛠️ MCP Server Tools
 
 Mustel runs an MCP server over stdio transport via `mustel serve`. The exposed tools are documented below:
 
@@ -93,7 +99,7 @@ Mustel runs an MCP server over stdio transport via `mustel serve`. The exposed t
 
 ---
 
-## Codebase Layout
+## 📂 Codebase Layout
 
 ```text
 mustel/
@@ -110,6 +116,6 @@ mustel/
 
 ---
 
-## License
+## 📄 License
 
 MIT License - Copyright (c) 2026 Ameya K, Raunak N. See [LICENSE](LICENSE) for details.
