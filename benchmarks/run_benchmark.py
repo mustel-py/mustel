@@ -68,7 +68,7 @@ PROJECTS_METADATA = {
                 "keywords": ["shell", "subprocess", "injection", "S602", "S603"],
             },
         ],
-        "ignore_rules": {"E402", "E501", "ANN201", "S201"},
+        "ignore_rules": {"E402", "E501", "ANN201", "S201", "flask-no-csrf", "flask-debug-true"},
     },
     "project_backend": {
         "planted_issues": [

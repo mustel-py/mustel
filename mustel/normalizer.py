@@ -148,47 +148,33 @@ def _generate_agent_prompt(
     warnings: List[MustelIssue],
     packages: List[PackageVulnerability],
 ) -> str:
-    """Generate a token-optimized, self-contained agent prompt detailing critical issues."""
+    """
+    Generate the ultra-compressed plain English agent_prompt string.
+    Target length: < 200 characters.
+    """
     total = len(errors) + len(security) + len(warnings) + len(packages)
 
     if total == 0:
-        return "Clean. 0 issues."
+        return "mustel found 0 issues. Project clean."
 
-    critical_items = []
+    groups = []
     
-    # 1. High/Critical Security Issues
-    for issue in security:
-        if issue.severity in ("high", "critical"):
-            critical_items.append(f"[{issue.id}] {issue.file}:{issue.line} - {issue.message}")
-            
-    # 2. Errors
-    for issue in errors:
-        critical_items.append(f"[{issue.id}] {issue.file}:{issue.line} - {issue.message}")
+    high_sec = [s.id for s in security if s.severity in ("high", "critical")]
+    if high_sec: groups.append(f"HighSec:{','.join(high_sec)}")
         
-    other_items = []
+    pkg_id = [p.id for p in packages]
+    if pkg_id: groups.append(f"PkgVuln:{','.join(pkg_id)}")
     
-    # 3. Medium/Low Security Issues
+    errs = [e.id for e in errors]
+    if errs: groups.append(f"Errs:{','.join(errs)}")
+        
     med_sec = [s.id for s in security if s.severity not in ("high", "critical")]
-    if med_sec:
-        other_items.append(f"{len(med_sec)} med-sec ({','.join(med_sec)})")
+    if med_sec: groups.append(f"MedSec:{','.join(med_sec)}")
         
-    # 4. Package Vulnerabilities
-    pkgs = [p.id for p in packages]
-    if pkgs:
-        other_items.append(f"{len(pkgs)} CVEs ({','.join(pkgs)})")
-        
-    # 5. Warnings (PEP8 / Unused imports / style)
     warns = [w.id for w in warnings]
-    if warns:
-        other_items.append(f"{len(warns)} style warnings")
+    if warns: groups.append(f"Warns:{','.join(warns)}")
 
-    parts = []
-    if critical_items:
-        parts.append("Fix these first: " + " | ".join(critical_items))
-    if other_items:
-        parts.append("Other: " + ", ".join(other_items))
-
-    return "mustel: " + " | ".join(parts)
+    return f"mustel found {total} issues: {' | '.join(groups)}. Use IDs to lookup details in JSON."
 
 
 # ─────────────────────────────────────────────
