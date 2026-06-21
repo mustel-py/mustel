@@ -15,7 +15,7 @@ pre-commit install
 
 ```bash
 # Run mustel against the benchmark test projects
-python run_tests.py
+python benchmarks/run_extension_tests.py
 
 # Test a single project
 mustel review tests/test_projects/project_auth --no-packages --pretty
@@ -38,7 +38,7 @@ patterns:
     category: "security"      # security | bug | style
     cwe: "CWE-XXX"            # optional, from https://cwe.mitre.org/
     detect:
-      type: "keyword"         # keyword | pattern | function_call_missing_arg
+      type: "keyword"         # keyword | pattern (or regex) | function_call_missing_arg
       match: "<string to find>"
     message: "Clear explanation of why this is bad and how to fix it."
     docs: "https://..."        # optional link to docs
@@ -49,7 +49,7 @@ patterns:
 | Type | Use When | Example |
 |------|----------|---------|
 | `keyword` | Simple string match | `match: "shell=True"` |
-| `pattern` | Regex needed | `match: "os\\.system\\("` |
+| `pattern` / `regex` | Regular expression matching | `match: "os\\.system\\("` |
 | `function_call_missing_arg` | Function called without required arg | `function: "requests.get"`, `missing_arg: "timeout"` |
 
 4. Test it: `mustel review tests/test_projects/ --no-packages --pretty`

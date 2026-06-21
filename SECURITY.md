@@ -4,14 +4,14 @@
 
 | Version | Supported |
 | ------- | --------- |
-| 0.2.x   | Yes       |
-| < 0.2   | No        |
+| 0.3.x   | Yes       |
+| < 0.3   | No        |
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability in mustel itself (not in the code mustel scans), please **do not open a public issue.**
 
-Instead, email us directly at **acclaptop47@gmail.com** with:
+Instead, email us directly at **mustel.oss@gmail.com** with:
 
 1. A description of the vulnerability.
 2. Steps to reproduce it.
