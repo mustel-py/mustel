@@ -4,44 +4,44 @@
     "code_map_chars": 19318,
     "code_map_tokens_cl100k": 4587,
     "code_map_tokens_o200k": 4589,
-    "code_map_time_ms": 81,
-    "initial_scan_time_ms": 331,
-    "incremental_scan_time_ms": 31
+    "code_map_time_ms": 676,
+    "initial_scan_time_ms": 384,
+    "incremental_scan_time_ms": 50
   },
   "click": {
     "files": 17,
     "code_map_chars": 32425,
     "code_map_tokens_cl100k": 7794,
     "code_map_tokens_o200k": 7843,
-    "code_map_time_ms": 164,
-    "initial_scan_time_ms": 286,
-    "incremental_scan_time_ms": 26
+    "code_map_time_ms": 964,
+    "initial_scan_time_ms": 386,
+    "incremental_scan_time_ms": 37
   },
   "mcp": {
     "files": 109,
     "code_map_chars": 73614,
     "code_map_tokens_cl100k": 15921,
     "code_map_tokens_o200k": 15976,
-    "code_map_time_ms": 321,
-    "initial_scan_time_ms": 437,
-    "incremental_scan_time_ms": 55
+    "code_map_time_ms": 3877,
+    "initial_scan_time_ms": 344,
+    "incremental_scan_time_ms": 34
   },
   "watchdog": {
     "files": 25,
     "code_map_chars": 21157,
     "code_map_tokens_cl100k": 4908,
     "code_map_tokens_o200k": 4915,
-    "code_map_time_ms": 122,
-    "initial_scan_time_ms": 421,
-    "incremental_scan_time_ms": 38
+    "code_map_time_ms": 561,
+    "initial_scan_time_ms": 177,
+    "incremental_scan_time_ms": 18
   },
   "bandit": {
     "files": 69,
     "code_map_chars": 18060,
     "code_map_tokens_cl100k": 4352,
     "code_map_tokens_o200k": 4387,
-    "code_map_time_ms": 299,
-    "initial_scan_time_ms": 484,
-    "incremental_scan_time_ms": 68
+    "code_map_time_ms": 1466,
+    "initial_scan_time_ms": 258,
+    "incremental_scan_time_ms": 31
   }
 }

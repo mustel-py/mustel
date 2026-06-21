@@ -127,8 +127,12 @@ def bootstrap_project(project_path: str) -> Dict[str, bool]:
     results["cursor_config"] = inject_into_json_file(cursor_proj)
     results["claude_config"] = inject_into_json_file(claude_proj)
 
-    # 2. Rules injection (.cursorrules / .windsurfrules)
-    rule_files = [".cursorrules", ".windsurfrules"]
+    # 2. Rules injection (.cursorrules / .windsurfrules / .agents/AGENTS.md)
+    rule_files = [
+        ".cursorrules",
+        ".windsurfrules",
+        os.path.join(".agents", "AGENTS.md")
+    ]
     rules_text = (
         "\n\n# --- MUSTEL AGENT GUARDRAILS ---\n"
         "# Before proposing or finalizing code changes, you must run the mustel review tool.\n"
@@ -140,6 +144,7 @@ def bootstrap_project(project_path: str) -> Dict[str, bool]:
     for rule_file in rule_files:
         rule_path = os.path.join(root, rule_file)
         try:
+            os.makedirs(os.path.dirname(rule_path), exist_ok=True)
             exists = os.path.exists(rule_path)
             mode = "a" if exists else "w"
             
